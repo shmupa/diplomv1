@@ -70,7 +70,7 @@ public:
     double Value1;
     double Value2;
     Material^ ContactMaterial;
-    
+
     BoundaryCondition(BoundaryConditionType type, double temperature)//1 род
     {
         Type = type;
@@ -222,44 +222,44 @@ private:
     }
 
 public:
-    property double L{
+    property double L {
         double get() { return material->L; }
         void set(double value) { material->L = value; }
     }
 
-    property double T0{
+    property double T0 {
         double get() { return material->T0; }
         void set(double value) { material->T0 = value; }
     }
 
-    property int NodesCount{
+    property int NodesCount {
         int get() { return material->NodesCount; }
         void set(int value) { material->NodesCount = value; }
     }
 
-    property double EndTime{
+    property double EndTime {
         double get() { return material->EndTime; }
         void set(double value) { material->EndTime = value; }
     }
 
-    property Material^ CurrentMaterial{
-        Material ^ get() { return material; }
-        void set(Material ^ value) { material = value; }
+    property Material^ CurrentMaterial {
+        Material^ get() { return material; }
+        void set(Material^ value) { material = value; }
     }
 
-    property BoundaryCondition^ LeftBoundary{
-        BoundaryCondition ^ get() { return leftBoundary; }
-        void set(BoundaryCondition ^ value) { leftBoundary = value; }
+    property BoundaryCondition^ LeftBoundary {
+        BoundaryCondition^ get() { return leftBoundary; }
+        void set(BoundaryCondition^ value) { leftBoundary = value; }
     }
 
-    property BoundaryCondition^ RightBoundary{
-        BoundaryCondition ^ get() { return rightBoundary; }
-        void set(BoundaryCondition ^ value) { rightBoundary = value; }
+    property BoundaryCondition^ RightBoundary {
+        BoundaryCondition^ get() { return rightBoundary; }
+        void set(BoundaryCondition^ value) { rightBoundary = value; }
     }
 
-    property CompositeRod^ Rod{
-        CompositeRod ^ get() { return compositeRod; }
-        void set(CompositeRod ^ value) { compositeRod = value; }
+    property CompositeRod^ Rod {
+        CompositeRod^ get() { return compositeRod; }
+        void set(CompositeRod^ value) { compositeRod = value; }
     }
 
     Solution(Material^ mat, BoundaryCondition^ leftBC, BoundaryCondition^ rightBC)
@@ -320,6 +320,7 @@ public:
             }
         }
     }
+
     void CalculateImplicitScheme()
     {
         InitializeNodes();
@@ -420,16 +421,16 @@ public:
             while (dTmax > eps && k < max_iter)
             {
                 dTmax = 0.0;
-                
+
                 T1[0] = (b[0] + ar[0] * TT[1]) / ap[0];
-                
+
                 for (int i = 1; i <= NodesCount; i++)
                 {
                     T1[i] = (b[i] + ar[i] * TT[i + 1] + al[i] * TT[i - 1]) / ap[i];
                 }
-                
+
                 T1[NodesCount + 1] = (b[NodesCount + 1] + al[NodesCount + 1] * TT[NodesCount]) / ap[NodesCount + 1];
-                
+
                 for (int i = 0; i <= NodesCount + 1; i++)
                 {
                     dTmax += Math::Pow((T1[i] - TT[i]), 2);
@@ -451,6 +452,7 @@ public:
             }
         }
     }
+
     void CalculateCNScheme()
     {
         InitializeNodes();
@@ -494,7 +496,9 @@ public:
                 break;
 
             case BoundaryConditionType::SecondKind:
-                A[0] = 0; B[0] = 1.0 + 2.0 * coeff; C[0] = -2.0 * coeff;
+                A[0] = 0;
+                B[0] = 1.0 + 2.0 * coeff;
+                C[0] = -2.0 * coeff;
                 D[0] = T_old[0] + 2.0 * coeff * (T_old[1] - T_old[0])
                     - (2.0 * coeff * h * leftBoundary->Value1) / material->Lambda;
                 break;
@@ -523,7 +527,9 @@ public:
                 break;
 
             case BoundaryConditionType::SecondKind:
-                A[last] = -2.0 * coeff; B[last] = 1.0 + 2.0 * coeff; C[last] = 0;
+                A[last] = -2.0 * coeff;
+                B[last] = 1.0 + 2.0 * coeff;
+                C[last] = 0;
                 D[last] = T_old[last] - 2.0 * coeff * (T_old[last] - T_old[last - 1])
                     + (2.0 * coeff * h * rightBoundary->Value1) / material->Lambda;
                 break;
@@ -535,11 +541,12 @@ public:
                 D[last] = T_old[last] - 2.0 * coeff * (T_old[last] - T_old[last - 1])
                     + (4.0 * coeff * rightBoundary->Value1 * h * rightBoundary->Value2) / material->Lambda;
                 break;
+
             case BoundaryConditionType::FourthKind:
                 A[last] = 0;
                 B[last] = 1;
                 C[last] = 0;
-                D[last] = T_old[last]; 
+                D[last] = T_old[last];
                 break;
             }
             P[0] = -C[0] / B[0]; //прямая
@@ -569,6 +576,214 @@ public:
             }
         }
     }
+
+    //явная композит - ПЕРЕНЕСЕНО В PUBLIC
+    void CalculateExplicitComposite()
+    {
+        if (compositeRod == nullptr)
+        {
+            CalculateExplicitScheme();
+            return;
+        }
+
+        int totalNodes = NodesCount + 2;
+        nodes = gcnew array<Node^>(totalNodes);
+        double h = L / (NodesCount + 1);
+        double contactNode = (int)(compositeRod->ContactLength / h);
+        for (int i = 0; i < totalNodes; i++)
+        {
+            double x = i * h;
+            Material^ currentMaterial = compositeRod->MainMaterial;
+
+            if (i < contactNode && compositeRod->LeftContactMaterial != nullptr)
+                currentMaterial = compositeRod->LeftContactMaterial;
+            else if (i > totalNodes - contactNode - 1 && compositeRod->RightContactMaterial != nullptr)
+                currentMaterial = compositeRod->RightContactMaterial;
+
+            nodes[i] = gcnew Node(i, x, T0, currentMaterial);
+        }
+
+        double tau = CalculateTimeStep();
+        double time = 0;
+        array<double>^ TT = gcnew array<double>(totalNodes);
+
+        for (int i = 0; i < totalNodes; i++)
+            TT[i] = nodes[i]->T;
+
+        while (time < EndTime)
+        {
+            time += tau;
+            ApplyBoundaryCondition(leftBoundary, TT, 0, h, true);
+            ApplyBoundaryCondition(rightBoundary, TT, totalNodes - 1, h, false);
+            for (int i = 1; i <= NodesCount; i++)
+            {
+                Material^ leftMat = nodes[i - 1]->CurrentMaterial;
+                Material^ centerMat = nodes[i]->CurrentMaterial;
+                Material^ rightMat = nodes[i + 1]->CurrentMaterial;
+
+                double lambda_left = 2.0 * leftMat->Lambda * centerMat->Lambda /
+                    (leftMat->Lambda + centerMat->Lambda);
+                double lambda_right = 2.0 * centerMat->Lambda * rightMat->Lambda /
+                    (centerMat->Lambda + rightMat->Lambda);
+
+                double a_left = lambda_left / (centerMat->ro * centerMat->C);
+                double a_right = lambda_right / (centerMat->ro * centerMat->C);
+
+                TT[i] = nodes[i]->T + tau / (h * h) * (
+                    a_right * (nodes[i + 1]->T - nodes[i]->T) -
+                    a_left * (nodes[i]->T - nodes[i - 1]->T)
+                    );
+            }
+            for (int i = 0; i < totalNodes; i++)
+                nodes[i]->SetTemperature(TT[i]);
+        }
+    }
+
+    //неявная композит - ПЕРЕНЕСЕНО В PUBLIC
+    void CalculateImplicitComposite()
+    {
+        if (compositeRod == nullptr)
+        {
+            CalculateImplicitScheme();
+            return;
+        }
+
+        int totalNodes = NodesCount + 2;
+        nodes = gcnew array<Node^>(totalNodes);
+        double h = L / (NodesCount + 1);
+        double contactNode = (int)(compositeRod->ContactLength / h);
+        for (int i = 0; i < totalNodes; i++)
+        {
+            double x = i * h;
+            Material^ currentMaterial = compositeRod->MainMaterial;
+
+            if (i < contactNode && compositeRod->LeftContactMaterial != nullptr)
+                currentMaterial = compositeRod->LeftContactMaterial;
+            else if (i > totalNodes - contactNode - 1 && compositeRod->RightContactMaterial != nullptr)
+                currentMaterial = compositeRod->RightContactMaterial;
+            nodes[i] = gcnew Node(i, x, T0, currentMaterial);
+        }
+        double tau = CalculateTimeStep();
+        double time = 0;
+        array<double>^ T = gcnew array<double>(totalNodes);
+        array<double>^ TT = gcnew array<double>(totalNodes);
+        array<double>^ T1 = gcnew array<double>(totalNodes);
+        array<double>^ ap = gcnew array<double>(totalNodes);
+        array<double>^ ar = gcnew array<double>(totalNodes);
+        array<double>^ al = gcnew array<double>(totalNodes);
+        array<double>^ b = gcnew array<double>(totalNodes);
+
+        for (int i = 0; i < totalNodes; i++)
+        {
+            T[i] = nodes[i]->T;
+            TT[i] = nodes[i]->T;
+            T1[i] = nodes[i]->T;
+        }
+        while (time < EndTime)
+        {
+            time += tau;
+            for (int i = 1; i <= NodesCount; i++)
+            {
+                Material^ leftMat = nodes[i - 1]->CurrentMaterial;
+                Material^ centerMat = nodes[i]->CurrentMaterial;
+                Material^ rightMat = nodes[i + 1]->CurrentMaterial;
+
+                double lambda_left = 2.0 * leftMat->Lambda * centerMat->Lambda /
+                    (leftMat->Lambda + centerMat->Lambda);
+                double lambda_right = 2.0 * centerMat->Lambda * rightMat->Lambda /
+                    (centerMat->Lambda + rightMat->Lambda);
+
+                double a_left = lambda_left / (centerMat->ro * centerMat->C);
+                double a_right = lambda_right / (centerMat->ro * centerMat->C);
+
+                ar[i] = a_right * tau / (h * h);
+                al[i] = a_left * tau / (h * h);
+                ap[i] = 1 + al[i] + ar[i];
+                b[i] = T[i];
+            }
+
+            //левое гу
+            switch (leftBoundary->Type)
+            {
+            case BoundaryConditionType::FirstKind:
+                al[0] = 0.0; ar[0] = 0.0; ap[0] = 1.0; b[0] = leftBoundary->Value1;
+                break;
+            case BoundaryConditionType::SecondKind:
+                al[0] = 0.0; ar[0] = 1.0; ap[0] = 1.0;
+                b[0] = leftBoundary->Value1 * h / nodes[0]->CurrentMaterial->Lambda;
+                break;
+            case BoundaryConditionType::ThirdKind:
+                al[0] = 0.0; ar[0] = nodes[0]->CurrentMaterial->Lambda / h;
+                ap[0] = nodes[0]->CurrentMaterial->Lambda / h + leftBoundary->Value1;
+                b[0] = leftBoundary->Value1 * leftBoundary->Value2;
+                break;
+            case BoundaryConditionType::FourthKind:
+                al[0] = 0.0; ar[0] = 0.0; ap[0] = 1.0;
+                b[0] = T[0];
+                break;
+            }
+
+            //правое гу
+            int last = totalNodes - 1;
+            switch (rightBoundary->Type)
+            {
+            case BoundaryConditionType::FirstKind:
+                al[last] = 0.0; ar[last] = 0.0; ap[last] = 1.0; b[last] = rightBoundary->Value1;
+                break;
+            case BoundaryConditionType::SecondKind:
+                al[last] = 1.0; ar[last] = 0.0; ap[last] = 1.0;
+                b[last] = rightBoundary->Value1 * h / nodes[last]->CurrentMaterial->Lambda;
+                break;
+            case BoundaryConditionType::ThirdKind:
+                al[last] = nodes[0]->CurrentMaterial->Lambda / h; ar[last] = 0.0;
+                ap[last] = nodes[0]->CurrentMaterial->Lambda / h + rightBoundary->Value1;
+                b[last] = rightBoundary->Value1 * rightBoundary->Value2;
+                break;
+            case BoundaryConditionType::FourthKind:
+                al[last] = 0.0; ar[last] = 0.0; ap[last] = 1.0;
+                b[last] = T[last];
+                break;
+            }
+
+            double dTmax; //итерация
+            const double eps = 1e-9;
+            int k = 0;
+            const int max_iter = 1000;
+            dTmax = eps + 1;
+
+            while (dTmax > eps && k < max_iter)
+            {
+                dTmax = 0.0;
+
+                T1[0] = (b[0] + ar[0] * TT[1]) / ap[0];
+
+                for (int i = 1; i <= NodesCount; i++)
+                {
+                    T1[i] = (b[i] + ar[i] * TT[i + 1] + al[i] * TT[i - 1]) / ap[i];
+                }
+
+                T1[last] = (b[last] + al[last] * TT[last - 1]) / ap[last];
+
+                for (int i = 0; i < totalNodes; i++)
+                {
+                    dTmax += Math::Pow((T1[i] - TT[i]), 2);
+                    TT[i] = T1[i];
+                }
+                k++;
+            }
+            for (int i = 0; i < totalNodes; i++)
+            {
+                T[i] = TT[i];
+                nodes[i]->SetTemperature(T[i]);
+            }
+
+            for (int i = 1; i <= NodesCount; i++)
+            {
+                b[i] = T[i];
+            }
+        }
+    }
+
     void SaveToCSV(String^ filename)
     {
         try
@@ -610,6 +825,7 @@ public:
             throw gcnew Exception("Ошибка сохранения CSV: " + ex->Message);
         }
     }
+
     void CalculateCompositeRod()
     {
         if (compositeRod == nullptr)
@@ -666,10 +882,12 @@ public:
                 nodes[i]->SetTemperature(TT[i]);
         }
     }
+
     array<Node^>^ GetAllNodes()
     {
         return nodes;
     }
+
     String^ GetSolutionInfo()
     {
         return String::Format(

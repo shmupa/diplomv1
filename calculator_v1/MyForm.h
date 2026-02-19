@@ -1074,7 +1074,7 @@ namespace calculatorv1 {
 {
     //флаг для отслеживания расчета
     static bool isCalculating = false;
-    if (isCalculating)  //проверка
+    if (isCalculating) //проверка
     {
         MessageBox::Show("Расчет уже выполняется. Пожалуйста, подождите.",
             "Расчет выполняется",
@@ -1096,30 +1096,30 @@ namespace calculatorv1 {
         chart->Series[0]->Points->Clear();
         chart->Series[1]->Points->Clear();
         chart->Series[2]->Points->Clear();
-
         UpdateMaterialFromInput();
         chart->ChartAreas[0]->AxisX->Title = "Длина стержня, м";
         chart->ChartAreas[0]->AxisY->Title = "Температура, °C";
+
         BoundaryCondition^ leftBC;
         String^ leftType = comboLeftTypegu->Text;
 
-        if (leftType->Contains("I род"))
+        if (leftType->Contains("I род (постоянная температура)"))
         {
             double leftValue1 = Convert::ToDouble(textboxleft1->Text);
             leftBC = gcnew BoundaryCondition(BoundaryConditionType::FirstKind, leftValue1);
         }
-        else if (leftType->Contains("II род"))
+        else if (leftType->Contains("II род (тепловой поток)"))
         {
             double leftValue1 = Convert::ToDouble(textboxleft1->Text);
             leftBC = gcnew BoundaryCondition(BoundaryConditionType::SecondKind, leftValue1, true);
         }
-        else if (leftType->Contains("III род"))
+        else if (leftType->Contains("III род (конвекция)"))
         {
             double leftValue1 = Convert::ToDouble(textboxleft1->Text);
             double leftValue2 = Convert::ToDouble(textboxleft2->Text);
             leftBC = gcnew BoundaryCondition(BoundaryConditionType::ThirdKind, leftValue1, leftValue2);
         }
-        else if (leftType->Contains("IV род"))
+        else if (leftType->Contains("IV род (тепловой контакт)"))
         {
             if (!material2Added || groupBox4 == nullptr || !groupBox4->Visible)
             {
@@ -1144,26 +1144,27 @@ namespace calculatorv1 {
             double leftValue2 = Convert::ToDouble(textboxleft2->Text);
             leftBC = gcnew BoundaryCondition(BoundaryConditionType::ThirdKind, 15.536, leftValue2);
         }
+        
         BoundaryCondition^ rightBC;
         String^ rightType = comboRightTypegu->Text;
 
-        if (rightType->Contains("I род"))
+        if (rightType->Contains("I род (постоянная температура)"))
         {
             double rightValue1 = Convert::ToDouble(textboxright1->Text);
             rightBC = gcnew BoundaryCondition(BoundaryConditionType::FirstKind, rightValue1);
         }
-        else if (rightType->Contains("II род"))
+        else if (rightType->Contains("II род (тепловой поток)"))
         {
             double rightValue1 = Convert::ToDouble(textboxright1->Text);
             rightBC = gcnew BoundaryCondition(BoundaryConditionType::SecondKind, rightValue1, false);
         }
-        else if (rightType->Contains("III род"))
+        else if (rightType->Contains("III род (конвекция)"))
         {
             double rightValue1 = Convert::ToDouble(textboxright1->Text);
             double rightValue2 = Convert::ToDouble(textboxright2->Text);
             rightBC = gcnew BoundaryCondition(BoundaryConditionType::ThirdKind, rightValue1, rightValue2);
         }
-        else if (rightType->Contains("IV род"))
+        else if (rightType->Contains("IV род (тепловой контакт)"))
         {
             if (!material2Added || groupBox4 == nullptr || !groupBox4->Visible)
             {
@@ -1202,7 +1203,7 @@ namespace calculatorv1 {
                                  "Материал 2: " + comboBox_material2->Text;
             if (yavn_chb->Checked)
             {
-                solution->CalculateExplicitScheme();
+                solution->CalculateExplicitComposite();
                 array<Node^>^ nodes = solution->GetAllNodes();
                 for (int i = 0; i < nodes->Length; i++)
                 {
@@ -1212,7 +1213,7 @@ namespace calculatorv1 {
 
             if (neyavn_chb->Checked)
             {
-                solution->CalculateImplicitScheme();
+                solution->CalculateImplicitComposite();
                 array<Node^>^ nodes = solution->GetAllNodes();
                 for (int i = 0; i < nodes->Length; i++)
                 {
@@ -1297,7 +1298,6 @@ namespace calculatorv1 {
 
             AutoScaleChart();
         }
-
         array<Node^>^ finalNodes = solution->GetAllNodes();
         String^ result = String::Format(
             "Расчет завершен!\n" +
@@ -1531,13 +1531,15 @@ private: System::Void comboLeftTypegu_SelectedIndexChanged(System::Object^ sende
         textboxleft2->Text = "200";
     }
     else if (selectedType->Contains("IV род (тепловой контакт)")) {
-        if (material2Added && groupBox4->Visible)
-        {
-            labelLeft_tcp->Text = "Материал контакта: Материал 2";
-        }
+        labelLeft_koeff->Text = "Коэф. теплообмена";
+        labelLeft_koeff->Visible = true;
+        labelLeft_tcp->Visible = false;
+        textboxleft1->Visible = true;
+        textboxleft1->Text = "15,536";
+        textboxleft2->Visible = false;
+        if (material2Added && groupBox4->Visible) {}
         else
         {
-            labelLeft_tcp->Text = "Материал контакта: не добавлен!";
             MessageBox::Show("Для IV рода необходимо добавить Материал 2!",
                 "Предупреждение", MessageBoxButtons::OK, MessageBoxIcon::Warning);
         }
@@ -1571,13 +1573,15 @@ private: System::Void comboRightTypegu_SelectedIndexChanged(System::Object^ send
         textboxright2->Text = "200";
     }
     else if (selectedType->Contains("IV род (тепловой контакт)")) {
-        if (material2Added && groupBox4->Visible)
-        {
-            labelRight_tcp->Text = "Материал контакта: Материал 2";
-        }
+        labelRight_koeff->Text = "Коэф. теплообмена";
+        labelRight_koeff->Visible = true;
+        labelRight_tcp->Visible = false;
+        textboxright1->Visible = true;
+        textboxright1->Text = "15,536";
+        textboxright2->Visible = false;
+        if (material2Added && groupBox4->Visible){}
         else
         {
-            labelRight_tcp->Text = "Материал контакта: не добавлен!";
             MessageBox::Show("Для IV рода необходимо добавить Материал 2!",
                 "Предупреждение", MessageBoxButtons::OK, MessageBoxIcon::Warning);
         }
@@ -1614,10 +1618,10 @@ private: System::Void comboRightTypegu_SelectedIndexChanged(System::Object^ send
                 textboxright1->Text = "20";
                 textboxright2->Text = "200";
             }
-            else if (rightType->Contains("I род")) {
+            else if (rightType->Contains("I род (постоянная температура)")) {
                 textboxright1->Text = "20";
             }
-            else if (rightType->Contains("II род")) {
+            else if (rightType->Contains("II род (тепловой поток)")) {
                 textboxright1->Text = "50";
             }
         }
@@ -1639,10 +1643,10 @@ private: System::Void comboRightTypegu_SelectedIndexChanged(System::Object^ send
                 textboxleft1->Text = "10";
                 textboxleft2->Text = "-30";
             }
-            else if (leftType->Contains("I род")) {
+            else if (leftType->Contains("I род (постоянная температура)")) {
                 textboxleft1->Text = "10";
             }
-            else if (leftType->Contains("II род")) {
+            else if (leftType->Contains("II род (тепловой контакт)")) {
                 textboxleft1->Text = "50";
             }
 
@@ -1650,10 +1654,10 @@ private: System::Void comboRightTypegu_SelectedIndexChanged(System::Object^ send
                 textboxright1->Text = "10";
                 textboxright2->Text = "25";
             }
-            else if (rightType->Contains("I род")) {
+            else if (rightType->Contains("I род (постоянная температура)")) {
                 textboxright1->Text = "10";
             }
-            else if (rightType->Contains("II род")) {
+            else if (rightType->Contains("II род (тепловой поток)")) {
                 textboxright1->Text = "30";
             }
         }
