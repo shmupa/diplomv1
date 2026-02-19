@@ -13,7 +13,7 @@ namespace calculatorv1 {
     using namespace System::Windows::Forms::DataVisualization::Charting;
     using namespace System::IO;
 
-    public ref class MyForm : public System::Windows::Forms::Form
+      ref class MyForm : public System::Windows::Forms::Form
     {
     private:
         System::Windows::Forms::GroupBox^ groupLeftgu;
@@ -93,6 +93,13 @@ namespace calculatorv1 {
     private: System::Windows::Forms::TextBox^ textBox14;
 
            Solution^ solution;
+    private: System::Windows::Forms::GroupBox^ groupBox5;
+    private: System::Windows::Forms::TextBox^ Tmax;
+    private: System::Windows::Forms::TextBox^ Xmax;
+    private: System::Windows::Forms::TextBox^ Xmin;
+    private: System::Windows::Forms::TextBox^ Tmin;
+    private: System::Windows::Forms::CheckBox^ kn_chb;
+
            bool material2Added = false;
 
     public:
@@ -112,6 +119,7 @@ namespace calculatorv1 {
             System::Windows::Forms::DataVisualization::Charting::Legend^ legend1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Legend());
             System::Windows::Forms::DataVisualization::Charting::Series^ series1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
             System::Windows::Forms::DataVisualization::Charting::Series^ series2 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
+            System::Windows::Forms::DataVisualization::Charting::Series^ series3 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
             System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(MyForm::typeid));
             this->groupLeftgu = (gcnew System::Windows::Forms::GroupBox());
             this->labelLeft_tcp = (gcnew System::Windows::Forms::Label());
@@ -144,6 +152,7 @@ namespace calculatorv1 {
             this->button1 = (gcnew System::Windows::Forms::Button());
             this->button2 = (gcnew System::Windows::Forms::Button());
             this->shema_grb = (gcnew System::Windows::Forms::GroupBox());
+            this->kn_chb = (gcnew System::Windows::Forms::CheckBox());
             this->neyavn_chb = (gcnew System::Windows::Forms::CheckBox());
             this->yavn_chb = (gcnew System::Windows::Forms::CheckBox());
             this->groupBox_material_1 = (gcnew System::Windows::Forms::GroupBox());
@@ -176,6 +185,11 @@ namespace calculatorv1 {
             this->textBox14 = (gcnew System::Windows::Forms::TextBox());
             this->label7 = (gcnew System::Windows::Forms::Label());
             this->label9 = (gcnew System::Windows::Forms::Label());
+            this->groupBox5 = (gcnew System::Windows::Forms::GroupBox());
+            this->Xmax = (gcnew System::Windows::Forms::TextBox());
+            this->Xmin = (gcnew System::Windows::Forms::TextBox());
+            this->Tmin = (gcnew System::Windows::Forms::TextBox());
+            this->Tmax = (gcnew System::Windows::Forms::TextBox());
             this->groupLeftgu->SuspendLayout();
             this->groupBox1->SuspendLayout();
             this->groupBox2->SuspendLayout();
@@ -184,6 +198,7 @@ namespace calculatorv1 {
             this->groupBox_material_1->SuspendLayout();
             this->groupBox3->SuspendLayout();
             this->groupBox4->SuspendLayout();
+            this->groupBox5->SuspendLayout();
             this->SuspendLayout();
             // 
             // groupLeftgu
@@ -242,9 +257,9 @@ namespace calculatorv1 {
             // 
             this->comboLeftTypegu->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7.8F));
             this->comboLeftTypegu->FormattingEnabled = true;
-            this->comboLeftTypegu->Items->AddRange(gcnew cli::array< System::Object^  >(3) {
+            this->comboLeftTypegu->Items->AddRange(gcnew cli::array< System::Object^  >(4) {
                 L"I род (постоянная температура)", L"II род (тепловой поток)",
-                    L"III род (конвекция)"
+                    L"III род (конвекция)", L"IV род (тепловой контакт)"
             });
             this->comboLeftTypegu->Location = System::Drawing::Point(6, 32);
             this->comboLeftTypegu->Name = L"comboLeftTypegu";
@@ -272,7 +287,7 @@ namespace calculatorv1 {
             this->groupBox1->Controls->Add(this->label_t_nach);
             this->groupBox1->Font = (gcnew System::Drawing::Font(L"Montserrat SemiBold", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(204)));
-            this->groupBox1->Location = System::Drawing::Point(334, 473);
+            this->groupBox1->Location = System::Drawing::Point(334, 504);
             this->groupBox1->Name = L"groupBox1";
             this->groupBox1->Size = System::Drawing::Size(282, 96);
             this->groupBox1->TabIndex = 2;
@@ -382,7 +397,7 @@ namespace calculatorv1 {
             this->button_raschet->Cursor = System::Windows::Forms::Cursors::Hand;
             this->button_raschet->Font = (gcnew System::Drawing::Font(L"Montserrat SemiBold", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(204)));
-            this->button_raschet->Location = System::Drawing::Point(334, 575);
+            this->button_raschet->Location = System::Drawing::Point(334, 614);
             this->button_raschet->Name = L"button_raschet";
             this->button_raschet->Size = System::Drawing::Size(282, 67);
             this->button_raschet->TabIndex = 3;
@@ -393,7 +408,7 @@ namespace calculatorv1 {
             // label_result
             // 
             this->label_result->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
-            this->label_result->Location = System::Drawing::Point(631, 591);
+            this->label_result->Location = System::Drawing::Point(626, 614);
             this->label_result->Name = L"label_result";
             this->label_result->Size = System::Drawing::Size(506, 115);
             this->label_result->TabIndex = 4;
@@ -455,9 +470,9 @@ namespace calculatorv1 {
             // 
             this->comboRightTypegu->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7.8F));
             this->comboRightTypegu->FormattingEnabled = true;
-            this->comboRightTypegu->Items->AddRange(gcnew cli::array< System::Object^  >(3) {
+            this->comboRightTypegu->Items->AddRange(gcnew cli::array< System::Object^  >(4) {
                 L"I род (постоянная температура)", L"II род (тепловой поток)",
-                    L"III род (конвекция)"
+                    L"III род (конвекция)", L"IV род (тепловой контакт)"
             });
             this->comboRightTypegu->Location = System::Drawing::Point(6, 32);
             this->comboRightTypegu->Name = L"comboRightTypegu";
@@ -483,14 +498,15 @@ namespace calculatorv1 {
             legend1->LegendStyle = System::Windows::Forms::DataVisualization::Charting::LegendStyle::Column;
             legend1->Name = L"Legend1";
             this->chart->Legends->Add(legend1);
-            this->chart->Location = System::Drawing::Point(626, 55);
+            this->chart->Location = System::Drawing::Point(91, 5);
             this->chart->Name = L"chart";
             this->chart->Palette = System::Windows::Forms::DataVisualization::Charting::ChartColorPalette::Berry;
-            series1->BorderWidth = 3;
+            series1->BorderWidth = 5;
             series1->ChartArea = L"ChartArea1";
             series1->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::Spline;
             series1->Color = System::Drawing::Color::CornflowerBlue;
             series1->Legend = L"Legend1";
+            series1->MarkerSize = 7;
             series1->Name = L"Явная схема";
             series2->BorderDashStyle = System::Windows::Forms::DataVisualization::Charting::ChartDashStyle::Dash;
             series2->BorderWidth = 3;
@@ -498,10 +514,21 @@ namespace calculatorv1 {
             series2->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::Spline;
             series2->Color = System::Drawing::Color::GreenYellow;
             series2->Legend = L"Legend1";
+            series2->MarkerStep = 5;
             series2->MarkerStyle = System::Windows::Forms::DataVisualization::Charting::MarkerStyle::Circle;
             series2->Name = L"Неявная схема";
+            series3->BorderWidth = 3;
+            series3->ChartArea = L"ChartArea1";
+            series3->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::Point;
+            series3->Color = System::Drawing::Color::Crimson;
+            series3->Legend = L"Legend1";
+            series3->MarkerBorderWidth = 5;
+            series3->MarkerStep = 5;
+            series3->Name = L"Схема Кранка-Николсон";
+            series3->YValuesPerPoint = 6;
             this->chart->Series->Add(series1);
             this->chart->Series->Add(series2);
+            this->chart->Series->Add(series3);
             this->chart->Size = System::Drawing::Size(641, 514);
             this->chart->TabIndex = 6;
             this->chart->Text = L"chart2";
@@ -511,10 +538,11 @@ namespace calculatorv1 {
             this->button1->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"button1.BackgroundImage")));
             this->button1->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
             this->button1->Cursor = System::Windows::Forms::Cursors::Hand;
+            this->button1->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
             this->button1->ForeColor = System::Drawing::SystemColors::Control;
-            this->button1->Location = System::Drawing::Point(1153, 592);
+            this->button1->Location = System::Drawing::Point(1214, 623);
             this->button1->Name = L"button1";
-            this->button1->Size = System::Drawing::Size(55, 55);
+            this->button1->Size = System::Drawing::Size(67, 67);
             this->button1->TabIndex = 7;
             this->button1->UseVisualStyleBackColor = true;
             this->button1->Click += gcnew System::EventHandler(this, &MyForm::button1_Click);
@@ -526,26 +554,41 @@ namespace calculatorv1 {
             this->button2->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
             this->button2->Cursor = System::Windows::Forms::Cursors::Hand;
             this->button2->FlatAppearance->BorderColor = System::Drawing::SystemColors::Control;
+            this->button2->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
             this->button2->ForeColor = System::Drawing::SystemColors::Control;
-            this->button2->Location = System::Drawing::Point(1217, 592);
+            this->button2->Location = System::Drawing::Point(1287, 623);
             this->button2->Name = L"button2";
-            this->button2->Size = System::Drawing::Size(55, 55);
+            this->button2->Size = System::Drawing::Size(67, 67);
             this->button2->TabIndex = 8;
             this->button2->UseVisualStyleBackColor = false;
             this->button2->Click += gcnew System::EventHandler(this, &MyForm::button2_Click);
             // 
             // shema_grb
             // 
+            this->shema_grb->Controls->Add(this->kn_chb);
             this->shema_grb->Controls->Add(this->neyavn_chb);
             this->shema_grb->Controls->Add(this->yavn_chb);
             this->shema_grb->Font = (gcnew System::Drawing::Font(L"Montserrat SemiBold", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(204)));
             this->shema_grb->Location = System::Drawing::Point(334, 360);
             this->shema_grb->Name = L"shema_grb";
-            this->shema_grb->Size = System::Drawing::Size(282, 102);
+            this->shema_grb->Size = System::Drawing::Size(282, 123);
             this->shema_grb->TabIndex = 9;
             this->shema_grb->TabStop = false;
             this->shema_grb->Text = L"Тип разностной схемы:";
+            // 
+            // kn_chb
+            // 
+            this->kn_chb->AutoSize = true;
+            this->kn_chb->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+                static_cast<System::Byte>(204)));
+            this->kn_chb->Location = System::Drawing::Point(18, 90);
+            this->kn_chb->Name = L"kn_chb";
+            this->kn_chb->Size = System::Drawing::Size(185, 20);
+            this->kn_chb->TabIndex = 4;
+            this->kn_chb->Text = L"схема Кранка-Николсон";
+            this->kn_chb->UseVisualStyleBackColor = true;
+            this->kn_chb->CheckedChanged += gcnew System::EventHandler(this, &MyForm::kn_chb_CheckedChanged);
             // 
             // neyavn_chb
             // 
@@ -892,18 +935,73 @@ namespace calculatorv1 {
             this->label9->Size = System::Drawing::Size(100, 23);
             this->label9->TabIndex = 0;
             // 
+            // groupBox5
+            // 
+            this->groupBox5->BackColor = System::Drawing::Color::White;
+            this->groupBox5->Controls->Add(this->Xmax);
+            this->groupBox5->Controls->Add(this->Xmin);
+            this->groupBox5->Controls->Add(this->Tmin);
+            this->groupBox5->Controls->Add(this->Tmax);
+            this->groupBox5->Controls->Add(this->chart);
+            this->groupBox5->Location = System::Drawing::Point(626, 18);
+            this->groupBox5->Name = L"groupBox5";
+            this->groupBox5->Size = System::Drawing::Size(736, 582);
+            this->groupBox5->TabIndex = 12;
+            this->groupBox5->TabStop = false;
+            this->groupBox5->Enter += gcnew System::EventHandler(this, &MyForm::groupBox5_Enter);
+            // 
+            // Xmax
+            // 
+            this->Xmax->Font = (gcnew System::Drawing::Font(L"Montserrat SemiBold", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+                static_cast<System::Byte>(204)));
+            this->Xmax->Location = System::Drawing::Point(642, 523);
+            this->Xmax->Name = L"Xmax";
+            this->Xmax->Size = System::Drawing::Size(50, 28);
+            this->Xmax->TabIndex = 10;
+            this->Xmax->TextChanged += gcnew System::EventHandler(this, &MyForm::Xmax_TextChanged);
+            // 
+            // Xmin
+            // 
+            this->Xmin->Font = (gcnew System::Drawing::Font(L"Montserrat SemiBold", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+                static_cast<System::Byte>(204)));
+            this->Xmin->Location = System::Drawing::Point(181, 525);
+            this->Xmin->Name = L"Xmin";
+            this->Xmin->Size = System::Drawing::Size(50, 28);
+            this->Xmin->TabIndex = 9;
+            this->Xmin->TextChanged += gcnew System::EventHandler(this, &MyForm::Xmin_TextChanged);
+            // 
+            // Tmin
+            // 
+            this->Tmin->Font = (gcnew System::Drawing::Font(L"Montserrat SemiBold", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+                static_cast<System::Byte>(204)));
+            this->Tmin->Location = System::Drawing::Point(37, 416);
+            this->Tmin->Name = L"Tmin";
+            this->Tmin->Size = System::Drawing::Size(50, 28);
+            this->Tmin->TabIndex = 8;
+            this->Tmin->TextChanged += gcnew System::EventHandler(this, &MyForm::Tmin_TextChanged);
+            // 
+            // Tmax
+            // 
+            this->Tmax->Font = (gcnew System::Drawing::Font(L"Montserrat SemiBold", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+                static_cast<System::Byte>(204)));
+            this->Tmax->Location = System::Drawing::Point(37, 67);
+            this->Tmax->Name = L"Tmax";
+            this->Tmax->Size = System::Drawing::Size(50, 28);
+            this->Tmax->TabIndex = 7;
+            this->Tmax->TextChanged += gcnew System::EventHandler(this, &MyForm::Tmax_TextChanged);
+            // 
             // MyForm
             // 
             this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
             this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
             this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
             this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
-            this->ClientSize = System::Drawing::Size(1284, 740);
+            this->ClientSize = System::Drawing::Size(1374, 768);
+            this->Controls->Add(this->groupBox5);
             this->Controls->Add(this->groupBox3);
             this->Controls->Add(this->shema_grb);
             this->Controls->Add(this->button2);
             this->Controls->Add(this->button1);
-            this->Controls->Add(this->chart);
             this->Controls->Add(this->groupBox2);
             this->Controls->Add(this->label_result);
             this->Controls->Add(this->button_raschet);
@@ -929,6 +1027,8 @@ namespace calculatorv1 {
             this->groupBox3->ResumeLayout(false);
             this->groupBox4->ResumeLayout(false);
             this->groupBox4->PerformLayout();
+            this->groupBox5->ResumeLayout(false);
+            this->groupBox5->PerformLayout();
             this->ResumeLayout(false);
             this->PerformLayout();
 
@@ -969,93 +1069,183 @@ namespace calculatorv1 {
             comboRightTypegu->SelectedIndex = 2;
         }
 
-        // Расчет теплопроводности
+        //расчет теплопроводности
     private: System::Void button_raschet_Click(System::Object^ sender, System::EventArgs^ e)
+{
+    //флаг для отслеживания расчета
+    static bool isCalculating = false;
+    if (isCalculating)  //проверка
     {
-        // Добавляем флаг для отслеживания расчета
-        static bool isCalculating = false;
+        MessageBox::Show("Расчет уже выполняется. Пожалуйста, подождите.",
+            "Расчет выполняется",
+            MessageBoxButtons::OK,
+            MessageBoxIcon::Information);
+        return;
+    }
 
-        // Проверяем, не выполняется ли уже расчет
-        if (isCalculating)
+    isCalculating = true;
+
+    try
+    {
+        this->Cursor = Cursors::WaitCursor;
+        this->button_raschet->Enabled = false;
+
+        String^ originalButtonText = this->button_raschet->Text;
+        this->button_raschet->Text = L"Выполняется расчет...";
+
+        chart->Series[0]->Points->Clear();
+        chart->Series[1]->Points->Clear();
+        chart->Series[2]->Points->Clear();
+
+        UpdateMaterialFromInput();
+        chart->ChartAreas[0]->AxisX->Title = "Длина стержня, м";
+        chart->ChartAreas[0]->AxisY->Title = "Температура, °C";
+        BoundaryCondition^ leftBC;
+        String^ leftType = comboLeftTypegu->Text;
+
+        if (leftType->Contains("I род"))
         {
-            MessageBox::Show("Расчет уже выполняется. Пожалуйста, подождите.",
-                "Расчет выполняется",
-                MessageBoxButtons::OK,
-                MessageBoxIcon::Information);
-            return;
+            double leftValue1 = Convert::ToDouble(textboxleft1->Text);
+            leftBC = gcnew BoundaryCondition(BoundaryConditionType::FirstKind, leftValue1);
+        }
+        else if (leftType->Contains("II род"))
+        {
+            double leftValue1 = Convert::ToDouble(textboxleft1->Text);
+            leftBC = gcnew BoundaryCondition(BoundaryConditionType::SecondKind, leftValue1, true);
+        }
+        else if (leftType->Contains("III род"))
+        {
+            double leftValue1 = Convert::ToDouble(textboxleft1->Text);
+            double leftValue2 = Convert::ToDouble(textboxleft2->Text);
+            leftBC = gcnew BoundaryCondition(BoundaryConditionType::ThirdKind, leftValue1, leftValue2);
+        }
+        else if (leftType->Contains("IV род"))
+        {
+            if (!material2Added || groupBox4 == nullptr || !groupBox4->Visible)
+            {
+                throw gcnew Exception("Для IV рода необходимо добавить Материал 2 (нажмите 'Добавить материал')!");
+            }
+            
+            Material^ material2 = gcnew Material(
+                comboBox_material2->Text,
+                Convert::ToDouble(textBox14->Text),
+                Convert::ToDouble(textBox13->Text),
+                Convert::ToDouble(textBox12->Text),
+                Convert::ToDouble(textBox11->Text)
+            );
+            material2->L = Convert::ToDouble(textBox10->Text);          
+            material2->NodesCount = Convert::ToInt32(textBox9->Text);
+            material2->T0 = steel->T0;
+            int contactNodeIndex = 0;
+            leftBC = gcnew BoundaryCondition(BoundaryConditionType::FourthKind, material2, contactNodeIndex);
+        }
+        else
+        {
+            double leftValue2 = Convert::ToDouble(textboxleft2->Text);
+            leftBC = gcnew BoundaryCondition(BoundaryConditionType::ThirdKind, 15.536, leftValue2);
+        }
+        BoundaryCondition^ rightBC;
+        String^ rightType = comboRightTypegu->Text;
+
+        if (rightType->Contains("I род"))
+        {
+            double rightValue1 = Convert::ToDouble(textboxright1->Text);
+            rightBC = gcnew BoundaryCondition(BoundaryConditionType::FirstKind, rightValue1);
+        }
+        else if (rightType->Contains("II род"))
+        {
+            double rightValue1 = Convert::ToDouble(textboxright1->Text);
+            rightBC = gcnew BoundaryCondition(BoundaryConditionType::SecondKind, rightValue1, false);
+        }
+        else if (rightType->Contains("III род"))
+        {
+            double rightValue1 = Convert::ToDouble(textboxright1->Text);
+            double rightValue2 = Convert::ToDouble(textboxright2->Text);
+            rightBC = gcnew BoundaryCondition(BoundaryConditionType::ThirdKind, rightValue1, rightValue2);
+        }
+        else if (rightType->Contains("IV род"))
+        {
+            if (!material2Added || groupBox4 == nullptr || !groupBox4->Visible)
+            {
+                throw gcnew Exception("Для IV рода необходимо добавить Материал 2 (нажмите 'Добавить материал')!");
+            }
+            Material^ material2 = gcnew Material(
+                comboBox_material2->Text,
+                Convert::ToDouble(textBox14->Text),
+                Convert::ToDouble(textBox13->Text),
+                Convert::ToDouble(textBox12->Text),
+                Convert::ToDouble(textBox11->Text)
+            );
+            material2->L = Convert::ToDouble(textBox10->Text); //доп параметры     
+            material2->NodesCount = Convert::ToInt32(textBox9->Text);
+            material2->T0 = steel->T0;    
+            int contactNodeIndex = material2->NodesCount - 1;
+            rightBC = gcnew BoundaryCondition(BoundaryConditionType::FourthKind, material2, contactNodeIndex);
+        }
+        else
+        {
+            double rightValue2 = Convert::ToDouble(textboxright2->Text);
+            rightBC = gcnew BoundaryCondition(BoundaryConditionType::ThirdKind, 15.536, rightValue2);
         }
 
-        isCalculating = true;
-
-        try
+        solution->LeftBoundary = leftBC;
+        solution->RightBoundary = rightBC;
+        solution->NodesCount = steel->NodesCount;
+        solution->EndTime = steel->EndTime;
+        bool hasFourthKind = (leftBC->Type == BoundaryConditionType::FourthKind || 
+                              rightBC->Type == BoundaryConditionType::FourthKind);
+        if (hasFourthKind) //расчет в зависимости от наличия IV рода
         {
-            this->Cursor = Cursors::WaitCursor;
-            this->button_raschet->Enabled = false;
-
-            String^ originalButtonText = this->button_raschet->Text;
-            this->button_raschet->Text = L"Выполняется расчет...";
-
-            chart->Series[0]->Points->Clear();
-            chart->Series[1]->Points->Clear();
-
-            UpdateMaterialFromInput();
-
-            BoundaryCondition^ leftBC;
-            String^ leftType = comboLeftTypegu->Text;
-            double leftValue1 = Convert::ToDouble(textboxleft1->Text);
-
-            // Настраиваем только заголовки осей
-            chart->ChartAreas[0]->AxisX->Title = "Длина стержня, м";
-            chart->ChartAreas[0]->AxisY->Title = "Температура, °C";
-
-            if (leftType->Contains("I род") && leftType->Contains("постоянная температура"))
+            label_result->Text = "IV род выбран!\n" +
+                                 leftBC->ToString() + "\n" + 
+                                 rightBC->ToString() + "\n" +
+                                 "Материал 2: " + comboBox_material2->Text;
+            if (yavn_chb->Checked)
             {
-                leftBC = gcnew BoundaryCondition(BoundaryConditionType::FirstKind, leftValue1);
-            }
-            else if (leftType->Contains("II род") && leftType->Contains("тепловой поток"))
-            {
-                leftBC = gcnew BoundaryCondition(BoundaryConditionType::SecondKind, leftValue1, true);
-            }
-            else if (leftType->Contains("III род") && leftType->Contains("конвекция"))
-            {
-                double leftValue2 = Convert::ToDouble(textboxleft2->Text);
-                leftBC = gcnew BoundaryCondition(BoundaryConditionType::ThirdKind, leftValue1, leftValue2);
-            }
-            else
-            {
-                double leftValue2 = Convert::ToDouble(textboxleft2->Text);
-                leftBC = gcnew BoundaryCondition(BoundaryConditionType::ThirdKind, leftValue1, leftValue2);
+                solution->CalculateExplicitScheme();
+                array<Node^>^ nodes = solution->GetAllNodes();
+                for (int i = 0; i < nodes->Length; i++)
+                {
+                    chart->Series[0]->Points->AddXY(nodes[i]->X, nodes[i]->T);
+                }
             }
 
-            BoundaryCondition^ rightBC;
-            String^ rightType = comboRightTypegu->Text;
-            double rightValue1 = Convert::ToDouble(textboxright1->Text);
-
-            if (rightType->Contains("I род") && rightType->Contains("постоянная температура"))
+            if (neyavn_chb->Checked)
             {
-                rightBC = gcnew BoundaryCondition(BoundaryConditionType::FirstKind, rightValue1);
-            }
-            else if (rightType->Contains("II род") && rightType->Contains("тепловой поток"))
-            {
-                rightBC = gcnew BoundaryCondition(BoundaryConditionType::SecondKind, rightValue1, true);
-            }
-            else if (rightType->Contains("III род") && rightType->Contains("конвекция"))
-            {
-                double rightValue2 = Convert::ToDouble(textboxright2->Text);
-                rightBC = gcnew BoundaryCondition(BoundaryConditionType::ThirdKind, rightValue1, rightValue2);
-            }
-            else
-            {
-                double rightValue2 = Convert::ToDouble(textboxright2->Text);
-                rightBC = gcnew BoundaryCondition(BoundaryConditionType::ThirdKind, rightValue1, rightValue2);
-            }
+                solution->CalculateImplicitScheme();
+                array<Node^>^ nodes = solution->GetAllNodes();
+                for (int i = 0; i < nodes->Length; i++)
+                {
+                    chart->Series[1]->Points->AddXY(nodes[i]->X, nodes[i]->T);
+                }
+                chart->Series[1]->BorderDashStyle = System::Windows::Forms::DataVisualization::Charting::ChartDashStyle::Dash;
 
-            solution->LeftBoundary = leftBC;
-            solution->RightBoundary = rightBC;
-            solution->NodesCount = steel->NodesCount;
-            solution->EndTime = steel->EndTime;
+            }
+            if (kn_chb->Checked)
+            {
+                solution->CalculateCNScheme();
+                array<Node^>^ nodes = solution->GetAllNodes();
 
-
+                chart->Series[2]->Points->Clear();
+                for (int i = 0; i < nodes->Length; i++)
+                {
+                    chart->Series[2]->Points->AddXY(nodes[i]->X, nodes[i]->T);
+                }
+            }
+            if (!yavn_chb->Checked && !neyavn_chb->Checked && !kn_chb->Checked)
+            {
+                solution->CalculateExplicitScheme();
+                array<Node^>^ nodes = solution->GetAllNodes();
+                for (int i = 0; i < nodes->Length; i++)
+                {
+                    chart->Series[0]->Points->AddXY(nodes[i]->X, nodes[i]->T);
+                }
+                yavn_chb->Checked = true;
+            }
+            AutoScaleChart();
+        }
+        else
+        {
             if (yavn_chb->Checked)
             {
                 solution->CalculateExplicitScheme();
@@ -1083,7 +1273,18 @@ namespace calculatorv1 {
                     chart->Series[1]->Points->AddXY(nodes[nodes->Length - 1]->X, nodes[nodes->Length - 1]->T);
                 }
             }
-            if (!yavn_chb->Checked && !neyavn_chb->Checked)
+            if (kn_chb->Checked)
+            {
+                solution->CalculateCNScheme();
+                array<Node^>^ nodes = solution->GetAllNodes();
+
+                chart->Series[2]->Points->Clear();
+                for (int i = 0; i < nodes->Length; i++)
+                {
+                    chart->Series[2]->Points->AddXY(nodes[i]->X, nodes[i]->T);
+                }
+            }
+            if (!yavn_chb->Checked && !neyavn_chb->Checked && !kn_chb->Checked)
             {
                 solution->CalculateExplicitScheme();
                 array<Node^>^ nodes = solution->GetAllNodes();
@@ -1094,41 +1295,37 @@ namespace calculatorv1 {
                 yavn_chb->Checked = true;
             }
 
-            //автоматическое масштабирование графика
             AutoScaleChart();
-
-            array<Node^>^ finalNodes = solution->GetAllNodes();
-            String^ result = String::Format(
-                "Расчет завершен!\n" +
-                "Левое ГУ: {0}\n" +
-                "Правое ГУ: {1}\n" +
-                "Температура в начале: {2:F2}\n" +
-                "Температура в конце: {3:F2}\n" +
-                "Температура в середине: {4:F2}",
-                leftBC->ToString(),
-                rightBC->ToString(),
-                finalNodes[0]->T,
-                finalNodes[finalNodes->Length - 1]->T,
-                finalNodes[finalNodes->Length / 2]->T);
-            label_result->Text = result;
         }
-        catch (Exception^ ex)
-        {
-            label_result->Text = "Ошибка расчета: " + ex->Message;
-        }
-        finally
-        {
-            this->Cursor = Cursors::Default;
 
-            // Разблокируем кнопку
-            this->button_raschet->Enabled = true;
-
-            // Восстанавливаем текст кнопки
-            this->button_raschet->Text = L"Рассчитать теплопроводность";
-
-            isCalculating = false;
-        }
+        array<Node^>^ finalNodes = solution->GetAllNodes();
+        String^ result = String::Format(
+            "Расчет завершен!\n" +
+            "Левое ГУ: {0}\n" +
+            "Правое ГУ: {1}\n" +
+            "Температура в начале: {2:F2}\n" +
+            "Температура в конце: {3:F2}\n" +
+            "Температура в середине: {4:F2}\n",
+            leftBC->ToString(),
+            rightBC->ToString(),
+            finalNodes[0]->T,
+            finalNodes[finalNodes->Length - 1]->T,
+            finalNodes[finalNodes->Length / 2]->T);
+        label_result->Text = result;
     }
+    catch (Exception^ ex)
+    {
+        label_result->Text = "Ошибка расчета: " + ex->Message;
+        MessageBox::Show(ex->Message, "Ошибка", MessageBoxButtons::OK, MessageBoxIcon::Error);
+    }
+    finally
+    {
+        this->Cursor = Cursors::Default;
+        this->button_raschet->Enabled = true;
+        this->button_raschet->Text = L"Рассчитать теплопроводность";
+        isCalculating = false;
+    }
+}
 
            void UpdateMaterialFromInput()
            {
@@ -1160,9 +1357,7 @@ namespace calculatorv1 {
             double maxY = Double::MinValue;
             double minX = Double::MaxValue;
             double maxX = Double::MinValue;
-
-            // Находим минимальные и максимальные значения по всем сериям
-            for each(System::Windows::Forms::DataVisualization::Charting::Series ^ series in chart->Series)
+            for each(System::Windows::Forms::DataVisualization::Charting::Series ^ series in chart->Series) //находим мин макс по сериям
             {
                 if (series->Points->Count > 0)
                 {
@@ -1170,7 +1365,6 @@ namespace calculatorv1 {
                     {
                         double x = point->XValue;
                         double y = point->YValues[0];
-
                         if (x < minX) minX = x;
                         if (x > maxX) maxX = x;
                         if (y < minY) minY = y;
@@ -1178,13 +1372,9 @@ namespace calculatorv1 {
                     }
                 }
             }
-
-            // Добавляем отступы по осям (10% от диапазона)
             double yMargin = (maxY - minY) * 0.1;
             double xMargin = (maxX - minX) * 0.1;
-
-            // Если все значения одинаковы (особый случай)
-            if (Math::Abs(maxY - minY) < 0.001)
+            if (Math::Abs(maxY - minY) < 0.001) //если значения выйдут одинаковыми
             {
                 yMargin = Math::Abs(minY) * 0.1;
                 if (yMargin < 1) yMargin = 1;
@@ -1195,18 +1385,12 @@ namespace calculatorv1 {
                 xMargin = Math::Abs(minX) * 0.1;
                 if (xMargin < 0.1) xMargin = 0.1;
             }
-
-            // Устанавливаем границы осей с отступами
             chart->ChartAreas[0]->AxisY->Minimum = minY - yMargin;
             chart->ChartAreas[0]->AxisY->Maximum = maxY + yMargin;
             chart->ChartAreas[0]->AxisX->Minimum = minX - xMargin;
             chart->ChartAreas[0]->AxisX->Maximum = maxX + xMargin;
-
-            // Автоматически подбираем интервалы
             chart->ChartAreas[0]->AxisY->Interval = Double::NaN;
             chart->ChartAreas[0]->AxisX->Interval = Double::NaN;
-
-            // Форматирование подписей
             chart->ChartAreas[0]->AxisX->LabelStyle->Format = "F2";
             chart->ChartAreas[0]->AxisY->LabelStyle->Format = "F1";
         }
@@ -1214,7 +1398,6 @@ namespace calculatorv1 {
     private: System::Void MyForm_Load(System::Object^ sender, System::EventArgs^ e) {
         InitializeScrollBar();
     }
-
            void InitializeScrollBar() {
                for each(Control ^ control in groupBox3->Controls)
                {
@@ -1231,7 +1414,6 @@ namespace calculatorv1 {
 
                CalculateScrollRange();
            }
-
            void CalculateScrollRange() {
                int maxBottom = 0;
                for each(Control ^ control in groupBox3->Controls)
@@ -1243,7 +1425,6 @@ namespace calculatorv1 {
                            maxBottom = bottom;
                    }
                }
-
                int visibleHeight = groupBox3->ClientSize.Height - 10;
                if (maxBottom > visibleHeight)
                {
@@ -1307,10 +1488,7 @@ namespace calculatorv1 {
         {
             groupBox4->Visible = false;
             material2Added = false;
-
             radioButton_add_material->Checked = false;
-
-            // Сбрасываем значения второго материала
             textBox14->Text = "";
             textBox13->Text = "";
             textBox12->Text = "";
@@ -1318,9 +1496,7 @@ namespace calculatorv1 {
             textBox10->Text = "";
             textBox9->Text = "";
             comboBox_material2->SelectedIndex = 0;
-
-            groupBox_material_1->Top = 30; // Возвращаем на исходную позицию
-
+            groupBox_material_1->Top = 30;
             UpdateControlsPositions();
             CalculateScrollRange();
             vScrollBar1->Value = 0;
@@ -1328,56 +1504,85 @@ namespace calculatorv1 {
         }
     }
 
-    private: System::Void comboLeftTypegu_SelectedIndexChanged(System::Object^ sender, System::EventArgs^ e) {
-        String^ selectedType = comboLeftTypegu->Text;
+private: System::Void comboLeftTypegu_SelectedIndexChanged(System::Object^ sender, System::EventArgs^ e) {
+    String^ selectedType = comboLeftTypegu->Text;
 
-        if (selectedType->Contains("I род (постоянная температура)")) {
-            labelLeft_koeff->Text = "Температура, C";
-            labelLeft_tcp->Visible = false;
-            textboxleft2->Visible = false;
-            textboxleft1->Text = "200";
+    if (selectedType->Contains("I род (постоянная температура)")) {
+        labelLeft_koeff->Text = "Температура, C";
+        labelLeft_tcp->Visible = false;
+        textboxleft2->Visible = false;
+        textboxleft1->Visible = true;
+        textboxleft1->Text = "200";
+    }
+    else if (selectedType->Contains("II род (тепловой поток)")) {
+        labelLeft_koeff->Text = "Тепловой поток, Вт/м^2";
+        labelLeft_tcp->Visible = false;
+        textboxleft2->Visible = false;
+        textboxleft1->Visible = true;
+        textboxleft1->Text = "200";
+    }
+    else if (selectedType->Contains("III род (конвекция)")) {
+        labelLeft_koeff->Text = "Коэф. теплообмена";
+        labelLeft_tcp->Visible = true;
+        labelLeft_tcp->Text = "Температура среды, C";
+        textboxleft2->Visible = true;
+        textboxleft1->Visible = true;
+        textboxleft1->Text = "15,536";
+        textboxleft2->Text = "200";
+    }
+    else if (selectedType->Contains("IV род (тепловой контакт)")) {
+        if (material2Added && groupBox4->Visible)
+        {
+            labelLeft_tcp->Text = "Материал контакта: Материал 2";
         }
-        else if (selectedType->Contains("II род (тепловой поток)")) {
-            labelLeft_koeff->Text = "Тепловой поток, Вт/м^2";
-            labelLeft_tcp->Visible = false;
-            textboxleft2->Visible = false;
-            textboxleft1->Text = "200";
-        }
-        else if (selectedType->Contains("III род (конвекция)")) {
-            labelLeft_koeff->Text = "Коэф. теплообмена";
-            labelLeft_tcp->Visible = true;
-            labelLeft_tcp->Text = "Температура среды, C";
-            textboxleft2->Visible = true;
-            textboxleft1->Text = "15,536";
-            textboxleft2->Text = "200";
+        else
+        {
+            labelLeft_tcp->Text = "Материал контакта: не добавлен!";
+            MessageBox::Show("Для IV рода необходимо добавить Материал 2!",
+                "Предупреждение", MessageBoxButtons::OK, MessageBoxIcon::Warning);
         }
     }
+}
 
-    private: System::Void comboRightTypegu_SelectedIndexChanged(System::Object^ sender, System::EventArgs^ e) {
-        String^ selectedType = comboRightTypegu->Text;
+private: System::Void comboRightTypegu_SelectedIndexChanged(System::Object^ sender, System::EventArgs^ e) {
+    String^ selectedType = comboRightTypegu->Text;
 
-        if (selectedType->Contains("I род (постоянная температура)")) {
-            labelRight_koeff->Text = "Температура, C";
-            labelRight_tcp->Visible = false;
-            textboxright2->Visible = false;
-            textboxright1->Text = "200";
+    if (selectedType->Contains("I род (постоянная температура)")) {
+        labelRight_koeff->Text = "Температура, C";
+        labelRight_tcp->Visible = false;
+        textboxright2->Visible = false;
+        textboxright1->Visible = true;
+        textboxright1->Text = "200";
+    }
+    else if (selectedType->Contains("II род (тепловой поток)")) {
+        labelRight_koeff->Text = "Тепловой поток, Вт/м^2";
+        labelRight_tcp->Visible = false;
+        textboxright2->Visible = false;
+        textboxright1->Visible = true;
+        textboxright1->Text = "200";
+    }
+    else if (selectedType->Contains("III род (конвекция)")) {
+        labelRight_koeff->Text = "Коэф. теплообмена";
+        labelRight_tcp->Visible = true;
+        labelRight_tcp->Text = "Температура среды, C";
+        textboxright2->Visible = true;
+        textboxright1->Visible = true;
+        textboxright1->Text = "15,536";
+        textboxright2->Text = "200";
+    }
+    else if (selectedType->Contains("IV род (тепловой контакт)")) {
+        if (material2Added && groupBox4->Visible)
+        {
+            labelRight_tcp->Text = "Материал контакта: Материал 2";
         }
-        else if (selectedType->Contains("II род (тепловой поток)")) {
-            labelRight_koeff->Text = "Тепловой поток, Вт/м^2";
-            labelRight_tcp->Visible = false;
-            textboxright2->Visible = false;
-            textboxright1->Text = "200";
-        }
-        else if (selectedType->Contains("III род (конвекция)")) {
-            labelRight_koeff->Text = "Коэф. теплообмена";
-            labelRight_tcp->Visible = true;
-            labelRight_tcp->Text = "Температура среды, C";
-            textboxright2->Visible = true;
-            textboxright1->Text = "15,536";
-            textboxright2->Text = "200";
+        else
+        {
+            labelRight_tcp->Text = "Материал контакта: не добавлен!";
+            MessageBox::Show("Для IV рода необходимо добавить Материал 2!",
+                "Предупреждение", MessageBoxButtons::OK, MessageBoxIcon::Warning);
         }
     }
-
+}
     private: System::Void comboBox_material_SelectedIndexChanged(System::Object^ sender, System::EventArgs^ e) {
         String^ selectedMaterial = comboBox_material->Text;
 
@@ -1391,7 +1596,6 @@ namespace calculatorv1 {
             textBox6->Text = "20";
             textBox_materialN->Text = "512";
             textBox8->Text = "660";
-
             String^ leftType = comboLeftTypegu->Text;
             String^ rightType = comboRightTypegu->Text;
 
@@ -1494,7 +1698,7 @@ namespace calculatorv1 {
             solution->SaveToCSV(csvFilename);
 
             MessageBox::Show("График сохранен как: " + imageFilename +
-                "\nДанные сохранены как: " + csvFilename,
+                "Данные сохранены как: " + csvFilename,
                 "Сохранение завершено!",
                 MessageBoxButtons::OK, MessageBoxIcon::Information);
         }
@@ -1516,5 +1720,63 @@ namespace calculatorv1 {
     private: System::Void textboxleft1_TextChanged(System::Object^ sender, System::EventArgs^ e) {}
     private: System::Void yavn_chb_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {}
     private: System::Void neyavn_chb_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {}
-    };
+    private: System::Void Tmax_TextChanged(System::Object^ sender, System::EventArgs^ e) {
+    }
+private: System::Void Tmin_TextChanged(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void Xmin_TextChanged(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void Xmax_TextChanged(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void groupBox5_Enter(System::Object^ sender, System::EventArgs^ e) {
+    this->Xmin->KeyDown += gcnew KeyEventHandler(this, &MyForm::textBox_scale_KeyDown);
+    this->Xmax->KeyDown += gcnew KeyEventHandler(this, &MyForm::textBox_scale_KeyDown);
+    this->Tmin->KeyDown += gcnew KeyEventHandler(this, &MyForm::textBox_scale_KeyDown);
+    this->Tmax->KeyDown += gcnew KeyEventHandler(this, &MyForm::textBox_scale_KeyDown);
+}
+private: void ApplyScale() {
+    try {
+        double xMin = Convert::ToDouble(Xmin->Text);
+        double xMax = Convert::ToDouble(Xmax->Text);
+        double yMin = Convert::ToDouble(Tmin->Text);
+        double yMax = Convert::ToDouble(Tmax->Text);
+
+        if (xMin >= xMax) throw gcnew Exception("X мин должно быть меньше X макс");
+        if (yMin >= yMax) throw gcnew Exception("Y мин должно быть меньше Y макс");
+
+        chart->ChartAreas[0]->AxisX->Minimum = xMin;
+        chart->ChartAreas[0]->AxisX->Maximum = xMax;
+        chart->ChartAreas[0]->AxisY->Minimum = yMin;
+        chart->ChartAreas[0]->AxisY->Maximum = yMax;
+
+        chart->ChartAreas[0]->AxisX->Interval = (xMax - xMin) / 5;
+        chart->ChartAreas[0]->AxisY->Interval = (yMax - yMin) / 5;
+
+        chart->ChartAreas[0]->AxisX->LabelStyle->Format = "F1";
+        chart->ChartAreas[0]->AxisY->LabelStyle->Format = "F0";
+    }
+    catch (Exception^ ex) {
+        MessageBox::Show("Ошибка при установке масштаба: " + ex->Message,
+            "Ошибка", MessageBoxButtons::OK, MessageBoxIcon::Error);
+    }
+}
+
+private: System::Void textBox_scale_KeyDown(System::Object^ sender, System::Windows::Forms::KeyEventArgs^ e) {
+    if (e->KeyCode == Keys::Enter)
+    {
+        e->SuppressKeyPress = true;
+        ApplyScale();
+    }
+}
+
+private: System::Void textBox_scale_Leave(System::Object^ sender, System::EventArgs^ e) {
+    ApplyScale();
+}
+
+private: System::Void button_auto_scale_Click(System::Object^ sender, System::EventArgs^ e) {
+    AutoScaleChart();
+}
+private: System::Void kn_chb_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
+}
+};
 }

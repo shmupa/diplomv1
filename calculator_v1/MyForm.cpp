@@ -1,4 +1,5 @@
 #include "MyForm.h"
+#include <cmath>
 
 using namespace System;
 using namespace System::Windows::Forms;

@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <cmath>
 
 using namespace System;
 using namespace System::Collections::Generic;
@@ -69,8 +70,8 @@ public:
     double Value1;
     double Value2;
     Material^ ContactMaterial;
-
-    BoundaryCondition(BoundaryConditionType type, double temperature)
+    
+    BoundaryCondition(BoundaryConditionType type, double temperature)//1 род
     {
         Type = type;
         Value1 = temperature;
@@ -78,8 +79,7 @@ public:
         ContactMaterial = nullptr;
         Description = "1 род: T = " + Value1.ToString("F1") + "C";
     }
-
-    BoundaryCondition(BoundaryConditionType type, double heatFlux, bool isSecondKind)
+    BoundaryCondition(BoundaryConditionType type, double heatFlux, bool isSecondKind)//2 род
     {
         Type = type;
         Value1 = heatFlux;
@@ -87,8 +87,7 @@ public:
         ContactMaterial = nullptr;
         Description = "2 род: q = " + Value1.ToString("F1") + " Вт/м^2";
     }
-
-    BoundaryCondition(BoundaryConditionType type, double heatTransferCoeff, double environmentTemp)
+    BoundaryCondition(BoundaryConditionType type, double heatTransferCoeff, double environmentTemp)//3 род
     {
         Type = type;
         Value1 = heatTransferCoeff;
@@ -96,23 +95,13 @@ public:
         ContactMaterial = nullptr;
         Description = "3 род: alpha = " + Value1.ToString("F1") + ", Tср = " + Value2.ToString("F1") + "C";
     }
-
-    BoundaryCondition(BoundaryConditionType type, double contactTemp, Material^ contactMaterial)
+    BoundaryCondition(BoundaryConditionType type, Material^ contactMaterial, int contactNodeIndex)//4 род
     {
         Type = type;
-        Value1 = contactTemp;
+        Value1 = 0.0;
         Value2 = 0.0;
         ContactMaterial = contactMaterial;
-        Description = "4 род: Tконт = " + Value1.ToString("F1") + "C (" + contactMaterial->Name + ")";
-    }
-
-    BoundaryCondition()
-    {
-        Type = BoundaryConditionType::FirstKind;
-        Value1 = 20.0;
-        Value2 = 0.0;
-        ContactMaterial = nullptr;
-        Description = "1 род: T = 20.0";
+        Description = "4 род: контакт с " + contactMaterial->Name + " в узле " + contactNodeIndex.ToString();
     }
 
     virtual String^ ToString() override
@@ -317,10 +306,8 @@ public:
         while (time < EndTime)
         {
             time += tau;
-
             ApplyBoundaryCondition(leftBoundary, TT, 0, h, true);
             ApplyBoundaryCondition(rightBoundary, TT, NodesCount + 1, h, false);
-
             for (int i = 1; i <= NodesCount; i++)
             {
                 TT[i] = nodes[i]->T + a * tau / (h * h) *
@@ -333,19 +320,15 @@ public:
             }
         }
     }
-
     void CalculateImplicitScheme()
     {
         InitializeNodes();
-
         double h = L / (NodesCount + 1);
         double a = material->GetThermalDiffusivity();
         double tau = 0.5 * h * h / a;
-
         array<double>^ T = gcnew array<double>(NodesCount + 2);
         array<double>^ TT = gcnew array<double>(NodesCount + 2);
         array<double>^ T1 = gcnew array<double>(NodesCount + 2);
-
         array<double>^ ap = gcnew array<double>(NodesCount + 2);
         array<double>^ ar = gcnew array<double>(NodesCount + 2);
         array<double>^ al = gcnew array<double>(NodesCount + 2);
@@ -357,7 +340,6 @@ public:
             TT[i] = nodes[i]->T;
             T1[i] = nodes[i]->T;
         }
-
         double time = 0;
         while (time < EndTime)
         {
@@ -393,6 +375,12 @@ public:
                 ap[0] = material->Lambda / h + leftBoundary->Value1;
                 b[0] = leftBoundary->Value1 * leftBoundary->Value2;
                 break;
+            case BoundaryConditionType::FourthKind:
+                al[0] = 0.0;
+                ar[0] = 0.0;
+                ap[0] = 1.0;
+                b[0] = T[0]; //нужно будет получать температуру из 2 материала
+                break;
             }
 
             switch (rightBoundary->Type)
@@ -417,14 +405,18 @@ public:
                 ap[NodesCount + 1] = material->Lambda / h + rightBoundary->Value1;
                 b[NodesCount + 1] = rightBoundary->Value1 * rightBoundary->Value2;
                 break;
+            case BoundaryConditionType::FourthKind:
+                al[NodesCount + 1] = 0.0;
+                ar[NodesCount + 1] = 0.0;
+                ap[NodesCount + 1] = 1.0;
+                b[NodesCount + 1] = T[NodesCount + 1]; //тоже из 2 материала получаем 
+                break;
             }
-
             double dTmax;
             const double eps = 1e-9;
             int k = 0;
             const int max_iter = 1000;
             dTmax = eps + 1;
-
             while (dTmax > eps && k < max_iter)
             {
                 dTmax = 0.0;
@@ -459,6 +451,124 @@ public:
             }
         }
     }
+    void CalculateCNScheme()
+    {
+        InitializeNodes();
+        double h = L / (NodesCount + 1);
+        double a = material->GetThermalDiffusivity();
+        double tau = 0.5 * h * h / a;
+        array<double>^ T = gcnew array<double>(NodesCount + 2);
+        array<double>^ T_new = gcnew array<double>(NodesCount + 2);
+        array<double>^ T_old = gcnew array<double>(NodesCount + 2);
+        array<double>^ A = gcnew array<double>(NodesCount + 2);
+        array<double>^ B = gcnew array<double>(NodesCount + 2);
+        array<double>^ C = gcnew array<double>(NodesCount + 2);
+        array<double>^ D = gcnew array<double>(NodesCount + 2);
+        array<double>^ P = gcnew array<double>(NodesCount + 2);
+        array<double>^ Q = gcnew array<double>(NodesCount + 2);
+
+        for (int i = 0; i <= NodesCount + 1; i++)
+        {
+            T[i] = nodes[i]->T;
+            T_old[i] = nodes[i]->T;
+            T_new[i] = nodes[i]->T;
+        }
+        double time = 0;
+        double coeff = a * tau / (2.0 * h * h);
+        while (time < EndTime)
+        {
+            time += tau;
+            for (int i = 1; i <= NodesCount; i++)
+            {
+                A[i] = -coeff;
+                B[i] = 1.0 + 2.0 * coeff;
+                C[i] = -coeff;
+                D[i] = T_old[i] + coeff * (T_old[i - 1] - 2.0 * T_old[i] + T_old[i + 1]);
+            }
+            //левое гу
+            switch (leftBoundary->Type)
+            {
+            case BoundaryConditionType::FirstKind:
+                A[0] = 0; B[0] = 1; C[0] = 0;
+                D[0] = leftBoundary->Value1;
+                break;
+
+            case BoundaryConditionType::SecondKind:
+                A[0] = 0; B[0] = 1.0 + 2.0 * coeff; C[0] = -2.0 * coeff;
+                D[0] = T_old[0] + 2.0 * coeff * (T_old[1] - T_old[0])
+                    - (2.0 * coeff * h * leftBoundary->Value1) / material->Lambda;
+                break;
+
+            case BoundaryConditionType::ThirdKind:
+                A[0] = 0;
+                B[0] = 1.0 + 2.0 * coeff + (2.0 * coeff * leftBoundary->Value1 * h / material->Lambda);
+                C[0] = -2.0 * coeff;
+                D[0] = T_old[0] + 2.0 * coeff * (T_old[1] - T_old[0])
+                    + (4.0 * coeff * leftBoundary->Value1 * h * leftBoundary->Value2) / material->Lambda;
+                break;
+            case BoundaryConditionType::FourthKind:
+                A[0] = 0;
+                B[0] = 1;
+                C[0] = 0;
+                D[0] = T_old[0];
+                break;
+            }
+            //правое гу
+            int last = NodesCount + 1;
+            switch (rightBoundary->Type)
+            {
+            case BoundaryConditionType::FirstKind:
+                A[last] = 0; B[last] = 1; C[last] = 0;
+                D[last] = rightBoundary->Value1;
+                break;
+
+            case BoundaryConditionType::SecondKind:
+                A[last] = -2.0 * coeff; B[last] = 1.0 + 2.0 * coeff; C[last] = 0;
+                D[last] = T_old[last] - 2.0 * coeff * (T_old[last] - T_old[last - 1])
+                    + (2.0 * coeff * h * rightBoundary->Value1) / material->Lambda;
+                break;
+
+            case BoundaryConditionType::ThirdKind:
+                A[last] = -2.0 * coeff;
+                B[last] = 1.0 + 2.0 * coeff + (2.0 * coeff * rightBoundary->Value1 * h / material->Lambda);
+                C[last] = 0;
+                D[last] = T_old[last] - 2.0 * coeff * (T_old[last] - T_old[last - 1])
+                    + (4.0 * coeff * rightBoundary->Value1 * h * rightBoundary->Value2) / material->Lambda;
+                break;
+            case BoundaryConditionType::FourthKind:
+                A[last] = 0;
+                B[last] = 1;
+                C[last] = 0;
+                D[last] = T_old[last]; 
+                break;
+            }
+            P[0] = -C[0] / B[0]; //прямая
+            Q[0] = D[0] / B[0];
+
+            for (int i = 1; i <= last; i++)
+            {
+                if (abs(B[i] + A[i] * P[i - 1]) < 1e-15)
+                {
+                    P[i] = -C[i] / 1e-15;
+                    Q[i] = (D[i] - A[i] * Q[i - 1]) / 1e-15;
+                }
+                else
+                {
+                    P[i] = -C[i] / (B[i] + A[i] * P[i - 1]);
+                    Q[i] = (D[i] - A[i] * Q[i - 1]) / (B[i] + A[i] * P[i - 1]);
+                }
+            }
+            T_new[last] = Q[last]; //обратная
+            for (int i = last - 1; i >= 0; i--)
+                T_new[i] = P[i] * T_new[i + 1] + Q[i];
+            for (int i = 0; i <= last; i++)
+            {
+                T_old[i] = T_new[i];
+                T[i] = T_new[i];
+                nodes[i]->SetTemperature(T[i]);
+            }
+        }
+    }
     void SaveToCSV(String^ filename)
     {
         try
@@ -478,15 +588,21 @@ public:
             {
                 nodes[i]->SetTemperature(currentNodes[i]->T);
             }
+            CalculateCNScheme();
+            array<Node^>^ nodes_cn = GetAllNodes();
+            for (int i = 0; i < nodes->Length; i++)
+            {
+                nodes[i]->SetTemperature(currentNodes[i]->T);
+            }
             for (int i = 0; i < nodes_explicit->Length; i++)
             {
                 double temp_explicit = nodes_explicit[i]->T;
                 double temp_implicit = (i < nodes_implicit->Length) ? nodes_implicit[i]->T : 0;
+                double temp_cn = (i < nodes_cn->Length) ? nodes_cn[i]->T : 0;
 
                 sw->WriteLine(String::Format("{0:F6};{1:F6};{2:F6}",
                     nodes_explicit[i]->X, temp_explicit, temp_implicit));
             }
-
             sw->Close();
         }
         catch (Exception^ ex)
@@ -494,7 +610,6 @@ public:
             throw gcnew Exception("Ошибка сохранения CSV: " + ex->Message);
         }
     }
-
     void CalculateCompositeRod()
     {
         if (compositeRod == nullptr)
@@ -502,13 +617,10 @@ public:
             CalculateExplicitScheme();
             return;
         }
-
         int totalNodes = NodesCount + 2;
         nodes = gcnew array<Node^>(totalNodes);
-
         double h = L / (NodesCount + 1);
         double contactNodes = (int)(compositeRod->ContactLength / h);
-
         for (int i = 0; i < totalNodes; i++)
         {
             double x = i * h;
@@ -521,20 +633,16 @@ public:
 
             nodes[i] = gcnew Node(i, x, T0, currentMaterial);
         }
-
         double tau = CalculateTimeStep();
         double time = 0;
-
         array<double>^ TT = gcnew array<double>(totalNodes);
         for (int i = 0; i < totalNodes; i++)
             TT[i] = nodes[i]->T;
-
         while (time < EndTime)
         {
             time += tau;
 
             ApplyCompositeBoundaryConditions(TT, h, tau);
-
             for (int i = 1; i <= NodesCount; i++)
             {
                 Material^ leftMat = nodes[i - 1]->CurrentMaterial;
@@ -554,23 +662,20 @@ public:
                     a_left * (nodes[i]->T - nodes[i - 1]->T)
                     );
             }
-
             for (int i = 0; i < totalNodes; i++)
                 nodes[i]->SetTemperature(TT[i]);
         }
     }
-
     array<Node^>^ GetAllNodes()
     {
         return nodes;
     }
-
     String^ GetSolutionInfo()
     {
         return String::Format(
-            "Материал: {0}\nДлина: {1:F3} м\nНачальная температура: {2:F1}\n"
-            "Количество узлов: {3}\nВремя расчета: {4:F1} с\n"
-            "Левое ГУ: {5}\nПравое ГУ: {6}",
+            "Материал: {0} Длина: {1:F3} м Начальная температура: {2:F1}"
+            "Количество узлов: {3} Время расчета: {4:F1} с "
+            "Левое ГУ: {5} Правое ГУ: {6}",
             material->Name, L, T0, NodesCount, EndTime,
             leftBoundary->ToString(), rightBoundary->ToString());
     }
