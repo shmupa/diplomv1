@@ -343,7 +343,7 @@ private:
                 al[last] = matN->Lambda / dx;
                 ar[last] = 0.0;
                 ap[last] = matN->Lambda / dx;
-                b[last] = -rightBoundary->Value1;
+                b[last] = rightBoundary->Value1;
                 break;
 
             case BoundaryConditionType::ThirdKind:
@@ -397,7 +397,7 @@ private:
                 break;
 
             case BoundaryConditionType::SecondKind:
-                TT[last] = nodes[last - 1]->T - rightBoundary->Value1 * dx / matN->Lambda;
+                TT[last] = nodes[last - 1]->T + rightBoundary->Value1 * dx / matN->Lambda;
                 break;
 
             case BoundaryConditionType::ThirdKind:
@@ -592,7 +592,7 @@ public:  Solution(List<RodSegment^>^ segs, BoundaryCondition^ leftBC, BoundaryCo
                   al[i] = aL;
                   ap[i] = aP;
                   ar[i] = aR;
-                  b[i] = T[i];
+                  b[i] = rhs;
               }
 
               ImplicitBC(al, ap, ar, b);
@@ -703,7 +703,7 @@ public:  Solution(List<RodSegment^>^ segs, BoundaryCondition^ leftBC, BoundaryCo
                 b[last] = rightBoundary->Value1;
                 break;
             case BoundaryConditionType::SecondKind:
-                b[last] = -rightBoundary->Value1;
+                b[last] = rightBoundary->Value1;
                 break;
             case BoundaryConditionType::ThirdKind:
                 b[last] = rightBoundary->Value1 * rightBoundary->Value2;

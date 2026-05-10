@@ -11,6 +11,7 @@ namespace calculatorv1 {
     using namespace System::Windows::Forms;
     using namespace System::Data;
     using namespace System::Drawing;
+    using namespace System::Drawing::Drawing2D;
     using namespace System::Windows::Forms::DataVisualization::Charting;
     using namespace System::IO;
 
@@ -26,24 +27,13 @@ namespace calculatorv1 {
         System::Windows::Forms::Label^ label2;
         System::Windows::Forms::GroupBox^ groupBox1;
         List<GroupBox^>^ materialBoxes;
+        List<TextBox^>^ contactAlphaBoxes;
         Panel^ materialButtonsPanel;
         Button^ btnAddMaterialDynamic;
         Button^ btnDeleteMaterialDynamic;
-
-
-
-
-
         System::Windows::Forms::Label^ label_t_nach;
-
         System::Windows::Forms::Label^ label_t_vr;
-
-
-
-
-
         System::Windows::Forms::TextBox^ textBox6;
-
         System::Windows::Forms::TextBox^ textBox8;
         System::Windows::Forms::Button^ button_raschet;
         System::Windows::Forms::Label^ label_result;
@@ -57,45 +47,14 @@ namespace calculatorv1 {
 
     private: System::Windows::Forms::Label^ label1;
     private: System::Windows::Forms::Label^ label3;
-
     private: System::Windows::Forms::Button^ button1;
     private: System::Windows::Forms::Button^ button2;
     private: System::Windows::Forms::GroupBox^ shema_grb;
-
     private: System::Windows::Forms::CheckBox^ yavn_chb;
     private: System::Windows::Forms::CheckBox^ neyavn_chb;
-
-
-
-
-
-
-
-
-
-
-
     private: System::Windows::Forms::GroupBox^ groupBox3;
-
-
-
-
-
-
-
-
-
     private: System::Windows::Forms::Label^ label7;
-
-
-
     private: System::Windows::Forms::Label^ label9;
-
-
-
-
-
-
            Solution^ solution;
            Solution^ explicitSolution;
            Solution^ implicitSolution;
@@ -106,34 +65,26 @@ namespace calculatorv1 {
     private: System::Windows::Forms::TextBox^ Xmin;
     private: System::Windows::Forms::TextBox^ Tmin;
     private: System::Windows::Forms::CheckBox^ kn_chb;
-
-
-
     private: System::Windows::Forms::TextBox^ textBox_debug;
     private: System::Windows::Forms::Button^ button_ochistka;
-
     private: System::Windows::Forms::TextBox^ textBoxtau;
-
     private: System::Windows::Forms::Label^ labeltau;
     private: System::Windows::Forms::FlowLayoutPanel^ flowMaterials;
     public:
-        MyForm(void)
-        {
+        MyForm(void) {
             InitializeComponent();
             InitializeData();
         }
-
     private:
         System::ComponentModel::Container^ components;
 
 #pragma region Windows Form Designer generated code
-        void InitializeComponent(void)
-        {
-            System::Windows::Forms::DataVisualization::Charting::ChartArea^ chartArea1 = (gcnew System::Windows::Forms::DataVisualization::Charting::ChartArea());
-            System::Windows::Forms::DataVisualization::Charting::Legend^ legend1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Legend());
-            System::Windows::Forms::DataVisualization::Charting::Series^ series1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
-            System::Windows::Forms::DataVisualization::Charting::Series^ series2 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
-            System::Windows::Forms::DataVisualization::Charting::Series^ series3 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
+        void InitializeComponent(void) {
+            System::Windows::Forms::DataVisualization::Charting::ChartArea^ chartArea2 = (gcnew System::Windows::Forms::DataVisualization::Charting::ChartArea());
+            System::Windows::Forms::DataVisualization::Charting::Legend^ legend2 = (gcnew System::Windows::Forms::DataVisualization::Charting::Legend());
+            System::Windows::Forms::DataVisualization::Charting::Series^ series4 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
+            System::Windows::Forms::DataVisualization::Charting::Series^ series5 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
+            System::Windows::Forms::DataVisualization::Charting::Series^ series6 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
             System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(MyForm::typeid));
             this->groupLeftgu = (gcnew System::Windows::Forms::GroupBox());
             this->labelLeft_tcp = (gcnew System::Windows::Forms::Label());
@@ -202,6 +153,7 @@ namespace calculatorv1 {
             this->groupLeftgu->TabIndex = 0;
             this->groupLeftgu->TabStop = false;
             this->groupLeftgu->Text = L"Левое граничное условие";
+            this->groupLeftgu->Enter += gcnew System::EventHandler(this, &MyForm::groupLeftgu_Enter);
             // 
             // labelLeft_tcp
             // 
@@ -225,8 +177,10 @@ namespace calculatorv1 {
             // 
             // textboxleft2
             // 
-            this->textboxleft2->BackColor = System::Drawing::SystemColors::Control;
+            this->textboxleft2->BackColor = System::Drawing::SystemColors::Window;
+            this->textboxleft2->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
             this->textboxleft2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7.8F));
+            this->textboxleft2->ForeColor = System::Drawing::SystemColors::MenuText;
             this->textboxleft2->Location = System::Drawing::Point(185, 113);
             this->textboxleft2->Name = L"textboxleft2";
             this->textboxleft2->Size = System::Drawing::Size(101, 22);
@@ -234,8 +188,10 @@ namespace calculatorv1 {
             // 
             // textboxleft1
             // 
-            this->textboxleft1->BackColor = System::Drawing::SystemColors::Control;
+            this->textboxleft1->BackColor = System::Drawing::SystemColors::Window;
+            this->textboxleft1->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
             this->textboxleft1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7.8F));
+            this->textboxleft1->ForeColor = System::Drawing::SystemColors::MenuText;
             this->textboxleft1->Location = System::Drawing::Point(185, 85);
             this->textboxleft1->Name = L"textboxleft1";
             this->textboxleft1->Size = System::Drawing::Size(101, 22);
@@ -243,7 +199,7 @@ namespace calculatorv1 {
             // 
             // comboLeftTypegu
             // 
-            this->comboLeftTypegu->BackColor = System::Drawing::SystemColors::Control;
+            this->comboLeftTypegu->BackColor = System::Drawing::SystemColors::ButtonFace;
             this->comboLeftTypegu->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7.8F));
             this->comboLeftTypegu->ForeColor = System::Drawing::SystemColors::WindowText;
             this->comboLeftTypegu->FormattingEnabled = true;
@@ -260,6 +216,7 @@ namespace calculatorv1 {
             // label2
             // 
             this->label2->AutoSize = true;
+            this->label2->BackColor = System::Drawing::Color::Transparent;
             this->label2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.8F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(204)));
             this->label2->Location = System::Drawing::Point(330, 23);
@@ -277,18 +234,20 @@ namespace calculatorv1 {
             this->groupBox1->Controls->Add(this->textBox6);
             this->groupBox1->Controls->Add(this->label_t_vr);
             this->groupBox1->Controls->Add(this->label_t_nach);
+            this->groupBox1->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
             this->groupBox1->Font = (gcnew System::Drawing::Font(L"Montserrat SemiBold", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(204)));
-            this->groupBox1->Location = System::Drawing::Point(334, 594);
+            this->groupBox1->Location = System::Drawing::Point(334, 603);
             this->groupBox1->Name = L"groupBox1";
-            this->groupBox1->Size = System::Drawing::Size(282, 125);
+            this->groupBox1->Size = System::Drawing::Size(304, 123);
             this->groupBox1->TabIndex = 2;
             this->groupBox1->TabStop = false;
             this->groupBox1->Text = L"Общие параметры";
             // 
             // textBoxtau
             // 
-            this->textBoxtau->BackColor = System::Drawing::SystemColors::Control;
+            this->textBoxtau->BackColor = System::Drawing::SystemColors::Window;
+            this->textBoxtau->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
             this->textBoxtau->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7.8F));
             this->textBoxtau->Location = System::Drawing::Point(166, 88);
             this->textBoxtau->Name = L"textBoxtau";
@@ -309,7 +268,8 @@ namespace calculatorv1 {
             // 
             // textBox8
             // 
-            this->textBox8->BackColor = System::Drawing::SystemColors::Control;
+            this->textBox8->BackColor = System::Drawing::SystemColors::Window;
+            this->textBox8->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
             this->textBox8->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7.8F));
             this->textBox8->Location = System::Drawing::Point(166, 60);
             this->textBox8->Name = L"textBox8";
@@ -318,7 +278,8 @@ namespace calculatorv1 {
             // 
             // textBox6
             // 
-            this->textBox6->BackColor = System::Drawing::SystemColors::Control;
+            this->textBox6->BackColor = System::Drawing::SystemColors::Window;
+            this->textBox6->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
             this->textBox6->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7.8F));
             this->textBox6->Location = System::Drawing::Point(166, 32);
             this->textBox6->Name = L"textBox6";
@@ -365,23 +326,28 @@ namespace calculatorv1 {
             // 
             // button_raschet
             // 
+            this->button_raschet->BackColor = System::Drawing::Color::Blue;
+            this->button_raschet->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
             this->button_raschet->Cursor = System::Windows::Forms::Cursors::Hand;
+            this->button_raschet->FlatAppearance->BorderSize = 0;
+            this->button_raschet->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
             this->button_raschet->Font = (gcnew System::Drawing::Font(L"Montserrat SemiBold", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(204)));
-            this->button_raschet->Location = System::Drawing::Point(334, 724);
+            this->button_raschet->ForeColor = System::Drawing::Color::White;
+            this->button_raschet->Location = System::Drawing::Point(334, 736);
             this->button_raschet->Name = L"button_raschet";
-            this->button_raschet->Size = System::Drawing::Size(282, 67);
+            this->button_raschet->Size = System::Drawing::Size(304, 67);
             this->button_raschet->TabIndex = 3;
             this->button_raschet->Text = L"Рассчитать теплопроводность";
-            this->button_raschet->UseVisualStyleBackColor = true;
+            this->button_raschet->UseVisualStyleBackColor = false;
             this->button_raschet->Click += gcnew System::EventHandler(this, &MyForm::button_raschet_Click);
             // 
             // label_result
             // 
-            this->label_result->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
-            this->label_result->Location = System::Drawing::Point(644, 614);
+            this->label_result->BackColor = System::Drawing::Color::AliceBlue;
+            this->label_result->Location = System::Drawing::Point(650, 610);
             this->label_result->Name = L"label_result";
-            this->label_result->Size = System::Drawing::Size(506, 115);
+            this->label_result->Size = System::Drawing::Size(506, 127);
             this->label_result->TabIndex = 4;
             this->label_result->Text = L"Результаты будут здесь...";
             // 
@@ -393,6 +359,7 @@ namespace calculatorv1 {
             this->groupBox2->Controls->Add(this->textboxright2);
             this->groupBox2->Controls->Add(this->textboxright1);
             this->groupBox2->Controls->Add(this->comboRightTypegu);
+            this->groupBox2->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
             this->groupBox2->Font = (gcnew System::Drawing::Font(L"Montserrat SemiBold", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(204)));
             this->groupBox2->Location = System::Drawing::Point(12, 209);
@@ -424,7 +391,8 @@ namespace calculatorv1 {
             // 
             // textboxright2
             // 
-            this->textboxright2->BackColor = System::Drawing::SystemColors::Control;
+            this->textboxright2->BackColor = System::Drawing::SystemColors::Window;
+            this->textboxright2->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
             this->textboxright2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7.8F));
             this->textboxright2->Location = System::Drawing::Point(185, 110);
             this->textboxright2->Name = L"textboxright2";
@@ -433,7 +401,8 @@ namespace calculatorv1 {
             // 
             // textboxright1
             // 
-            this->textboxright1->BackColor = System::Drawing::SystemColors::Control;
+            this->textboxright1->BackColor = System::Drawing::SystemColors::Window;
+            this->textboxright1->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
             this->textboxright1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7.8F));
             this->textboxright1->Location = System::Drawing::Point(185, 82);
             this->textboxright1->Name = L"textboxright1";
@@ -442,7 +411,7 @@ namespace calculatorv1 {
             // 
             // comboRightTypegu
             // 
-            this->comboRightTypegu->BackColor = System::Drawing::SystemColors::Control;
+            this->comboRightTypegu->BackColor = System::Drawing::SystemColors::ButtonFace;
             this->comboRightTypegu->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7.8F));
             this->comboRightTypegu->FormattingEnabled = true;
             this->comboRightTypegu->Items->AddRange(gcnew cli::array< System::Object^  >(3) {
@@ -453,85 +422,83 @@ namespace calculatorv1 {
             this->comboRightTypegu->Name = L"comboRightTypegu";
             this->comboRightTypegu->Size = System::Drawing::Size(228, 24);
             this->comboRightTypegu->TabIndex = 1;
-            this->comboRightTypegu->Text = L"3 род (конвекция)";
             this->comboRightTypegu->SelectedIndexChanged += gcnew System::EventHandler(this, &MyForm::comboRightTypegu_SelectedIndexChanged);
             // 
             // chart
             // 
-            chartArea1->AxisX->Enabled = System::Windows::Forms::DataVisualization::Charting::AxisEnabled::True;
-            chartArea1->AxisX2->Enabled = System::Windows::Forms::DataVisualization::Charting::AxisEnabled::False;
-            chartArea1->AxisY2->Enabled = System::Windows::Forms::DataVisualization::Charting::AxisEnabled::False;
-            chartArea1->Name = L"ChartArea1";
-            this->chart->ChartAreas->Add(chartArea1);
+            chartArea2->AxisX->Enabled = System::Windows::Forms::DataVisualization::Charting::AxisEnabled::True;
+            chartArea2->AxisX2->Enabled = System::Windows::Forms::DataVisualization::Charting::AxisEnabled::False;
+            chartArea2->AxisY2->Enabled = System::Windows::Forms::DataVisualization::Charting::AxisEnabled::False;
+            chartArea2->Name = L"ChartArea1";
+            this->chart->ChartAreas->Add(chartArea2);
             this->chart->Cursor = System::Windows::Forms::Cursors::Hand;
-            legend1->AutoFitMinFontSize = 10;
-            legend1->BorderColor = System::Drawing::Color::Black;
-            legend1->DockedToChartArea = L"ChartArea1";
-            legend1->Enabled = false;
-            legend1->Font = (gcnew System::Drawing::Font(L"Montserrat SemiBold", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+            legend2->AutoFitMinFontSize = 10;
+            legend2->BorderColor = System::Drawing::Color::Black;
+            legend2->DockedToChartArea = L"ChartArea1";
+            legend2->Enabled = false;
+            legend2->Font = (gcnew System::Drawing::Font(L"Montserrat SemiBold", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(204)));
-            legend1->IsTextAutoFit = false;
-            legend1->LegendStyle = System::Windows::Forms::DataVisualization::Charting::LegendStyle::Column;
-            legend1->Name = L"Legend1";
-            this->chart->Legends->Add(legend1);
+            legend2->IsTextAutoFit = false;
+            legend2->LegendStyle = System::Windows::Forms::DataVisualization::Charting::LegendStyle::Column;
+            legend2->Name = L"Legend1";
+            this->chart->Legends->Add(legend2);
             this->chart->Location = System::Drawing::Point(91, 5);
             this->chart->Name = L"chart";
             this->chart->Palette = System::Windows::Forms::DataVisualization::Charting::ChartColorPalette::Berry;
-            series1->BorderWidth = 7;
-            series1->ChartArea = L"ChartArea1";
-            series1->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::Line;
-            series1->Color = System::Drawing::Color::CornflowerBlue;
-            series1->Legend = L"Legend1";
-            series1->MarkerSize = 7;
-            series1->Name = L"Явная схема";
-            series2->BorderDashStyle = System::Windows::Forms::DataVisualization::Charting::ChartDashStyle::Dash;
-            series2->BorderWidth = 3;
-            series2->ChartArea = L"ChartArea1";
-            series2->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::Line;
-            series2->Color = System::Drawing::Color::GreenYellow;
-            series2->Legend = L"Legend1";
-            series2->MarkerStep = 5;
-            series2->MarkerStyle = System::Windows::Forms::DataVisualization::Charting::MarkerStyle::Circle;
-            series2->Name = L"Неявная схема";
-            series3->BorderWidth = 3;
-            series3->ChartArea = L"ChartArea1";
-            series3->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::Point;
-            series3->Color = System::Drawing::Color::Crimson;
-            series3->Legend = L"Legend1";
-            series3->MarkerBorderWidth = 5;
-            series3->MarkerStep = 5;
-            series3->Name = L"Схема Кранка-Николсон";
-            series3->YValuesPerPoint = 6;
-            this->chart->Series->Add(series1);
-            this->chart->Series->Add(series2);
-            this->chart->Series->Add(series3);
+            series4->BorderWidth = 7;
+            series4->ChartArea = L"ChartArea1";
+            series4->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::Line;
+            series4->Color = System::Drawing::Color::CornflowerBlue;
+            series4->Legend = L"Legend1";
+            series4->MarkerSize = 7;
+            series4->Name = L"Явная схема";
+            series5->BorderDashStyle = System::Windows::Forms::DataVisualization::Charting::ChartDashStyle::Dash;
+            series5->BorderWidth = 3;
+            series5->ChartArea = L"ChartArea1";
+            series5->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::Line;
+            series5->Color = System::Drawing::Color::GreenYellow;
+            series5->Legend = L"Legend1";
+            series5->MarkerStep = 5;
+            series5->MarkerStyle = System::Windows::Forms::DataVisualization::Charting::MarkerStyle::Circle;
+            series5->Name = L"Неявная схема";
+            series6->BorderWidth = 3;
+            series6->ChartArea = L"ChartArea1";
+            series6->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::Point;
+            series6->Color = System::Drawing::Color::Crimson;
+            series6->Legend = L"Legend1";
+            series6->MarkerBorderWidth = 5;
+            series6->MarkerStep = 5;
+            series6->Name = L"Схема Кранка-Николсон";
+            series6->YValuesPerPoint = 6;
+            this->chart->Series->Add(series4);
+            this->chart->Series->Add(series5);
+            this->chart->Series->Add(series6);
             this->chart->Size = System::Drawing::Size(641, 514);
             this->chart->TabIndex = 6;
             this->chart->Text = L"chart2";
             // 
             // button1
             // 
+            this->button1->BackColor = System::Drawing::SystemColors::Window;
             this->button1->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"button1.BackgroundImage")));
             this->button1->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
             this->button1->Cursor = System::Windows::Forms::Cursors::Hand;
-            this->button1->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-            this->button1->ForeColor = System::Drawing::SystemColors::Control;
-            this->button1->Location = System::Drawing::Point(1228, 623);
+            this->button1->ForeColor = System::Drawing::Color::Blue;
+            this->button1->Location = System::Drawing::Point(1240, 623);
             this->button1->Name = L"button1";
             this->button1->Size = System::Drawing::Size(67, 67);
             this->button1->TabIndex = 7;
-            this->button1->UseVisualStyleBackColor = true;
+            this->button1->UseVisualStyleBackColor = false;
             this->button1->Click += gcnew System::EventHandler(this, &MyForm::button1_Click);
             // 
             // button2
             // 
-            this->button2->BackColor = System::Drawing::SystemColors::Control;
+            this->button2->BackColor = System::Drawing::SystemColors::Window;
             this->button2->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"button2.BackgroundImage")));
             this->button2->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
             this->button2->Cursor = System::Windows::Forms::Cursors::Hand;
             this->button2->FlatAppearance->BorderColor = System::Drawing::SystemColors::Control;
-            this->button2->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-            this->button2->ForeColor = System::Drawing::SystemColors::Control;
+            this->button2->ForeColor = System::Drawing::Color::Blue;
             this->button2->Location = System::Drawing::Point(1313, 623);
             this->button2->Name = L"button2";
             this->button2->Size = System::Drawing::Size(67, 67);
@@ -545,11 +512,12 @@ namespace calculatorv1 {
             this->shema_grb->Controls->Add(this->kn_chb);
             this->shema_grb->Controls->Add(this->neyavn_chb);
             this->shema_grb->Controls->Add(this->yavn_chb);
+            this->shema_grb->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
             this->shema_grb->Font = (gcnew System::Drawing::Font(L"Montserrat SemiBold", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(204)));
             this->shema_grb->Location = System::Drawing::Point(334, 469);
             this->shema_grb->Name = L"shema_grb";
-            this->shema_grb->Size = System::Drawing::Size(282, 123);
+            this->shema_grb->Size = System::Drawing::Size(304, 123);
             this->shema_grb->TabIndex = 9;
             this->shema_grb->TabStop = false;
             this->shema_grb->Text = L"Тип разностной схемы:";
@@ -557,6 +525,7 @@ namespace calculatorv1 {
             // kn_chb
             // 
             this->kn_chb->AutoSize = true;
+            this->kn_chb->Cursor = System::Windows::Forms::Cursors::Hand;
             this->kn_chb->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(204)));
             this->kn_chb->Location = System::Drawing::Point(18, 90);
@@ -570,6 +539,7 @@ namespace calculatorv1 {
             // neyavn_chb
             // 
             this->neyavn_chb->AutoSize = true;
+            this->neyavn_chb->Cursor = System::Windows::Forms::Cursors::Hand;
             this->neyavn_chb->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(204)));
             this->neyavn_chb->Location = System::Drawing::Point(17, 60);
@@ -582,6 +552,10 @@ namespace calculatorv1 {
             // yavn_chb
             // 
             this->yavn_chb->AutoSize = true;
+            this->yavn_chb->BackColor = System::Drawing::Color::Transparent;
+            this->yavn_chb->Checked = true;
+            this->yavn_chb->CheckState = System::Windows::Forms::CheckState::Checked;
+            this->yavn_chb->Cursor = System::Windows::Forms::Cursors::Hand;
             this->yavn_chb->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(204)));
             this->yavn_chb->Location = System::Drawing::Point(17, 34);
@@ -589,7 +563,7 @@ namespace calculatorv1 {
             this->yavn_chb->Size = System::Drawing::Size(108, 20);
             this->yavn_chb->TabIndex = 2;
             this->yavn_chb->Text = L"явная схема";
-            this->yavn_chb->UseVisualStyleBackColor = true;
+            this->yavn_chb->UseVisualStyleBackColor = false;
             // 
             // groupBox3
             // 
@@ -597,9 +571,9 @@ namespace calculatorv1 {
             this->groupBox3->Controls->Add(this->flowMaterials);
             this->groupBox3->Font = (gcnew System::Drawing::Font(L"Montserrat SemiBold", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(204)));
-            this->groupBox3->Location = System::Drawing::Point(334, 55);
+            this->groupBox3->Location = System::Drawing::Point(334, 48);
             this->groupBox3->Name = L"groupBox3";
-            this->groupBox3->Size = System::Drawing::Size(304, 412);
+            this->groupBox3->Size = System::Drawing::Size(304, 411);
             this->groupBox3->TabIndex = 11;
             this->groupBox3->TabStop = false;
             this->groupBox3->Text = L"Дополнительный материал";
@@ -610,7 +584,7 @@ namespace calculatorv1 {
             this->flowMaterials->FlowDirection = System::Windows::Forms::FlowDirection::TopDown;
             this->flowMaterials->Location = System::Drawing::Point(6, 25);
             this->flowMaterials->Name = L"flowMaterials";
-            this->flowMaterials->Size = System::Drawing::Size(288, 380);
+            this->flowMaterials->Size = System::Drawing::Size(292, 380);
             this->flowMaterials->TabIndex = 33;
             this->flowMaterials->WrapContents = false;
             // 
@@ -638,7 +612,7 @@ namespace calculatorv1 {
             this->groupBox5->Controls->Add(this->Tmin);
             this->groupBox5->Controls->Add(this->Tmax);
             this->groupBox5->Controls->Add(this->chart);
-            this->groupBox5->Location = System::Drawing::Point(644, 23);
+            this->groupBox5->Location = System::Drawing::Point(650, 23);
             this->groupBox5->Name = L"groupBox5";
             this->groupBox5->Size = System::Drawing::Size(736, 582);
             this->groupBox5->TabIndex = 12;
@@ -647,18 +621,24 @@ namespace calculatorv1 {
             // 
             // button_ochistka
             // 
+            this->button_ochistka->BackColor = System::Drawing::Color::AliceBlue;
+            this->button_ochistka->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
+            this->button_ochistka->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
             this->button_ochistka->Font = (gcnew System::Drawing::Font(L"Montserrat SemiBold", 7.8F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(204)));
+            this->button_ochistka->ForeColor = System::Drawing::Color::Blue;
             this->button_ochistka->Location = System::Drawing::Point(327, 525);
             this->button_ochistka->Name = L"button_ochistka";
             this->button_ochistka->Size = System::Drawing::Size(230, 28);
             this->button_ochistka->TabIndex = 11;
             this->button_ochistka->Text = L"Очистить значения";
-            this->button_ochistka->UseVisualStyleBackColor = true;
+            this->button_ochistka->UseVisualStyleBackColor = false;
             this->button_ochistka->Click += gcnew System::EventHandler(this, &MyForm::button_ochistka_Click);
             // 
             // Xmax
             // 
+            this->Xmax->BackColor = System::Drawing::SystemColors::Window;
+            this->Xmax->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
             this->Xmax->Font = (gcnew System::Drawing::Font(L"Montserrat SemiBold", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(204)));
             this->Xmax->Location = System::Drawing::Point(640, 525);
@@ -669,6 +649,8 @@ namespace calculatorv1 {
             // 
             // Xmin
             // 
+            this->Xmin->BackColor = System::Drawing::SystemColors::Window;
+            this->Xmin->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
             this->Xmin->Font = (gcnew System::Drawing::Font(L"Montserrat SemiBold", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(204)));
             this->Xmin->Location = System::Drawing::Point(181, 525);
@@ -679,6 +661,8 @@ namespace calculatorv1 {
             // 
             // Tmin
             // 
+            this->Tmin->BackColor = System::Drawing::SystemColors::Window;
+            this->Tmin->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
             this->Tmin->Font = (gcnew System::Drawing::Font(L"Montserrat SemiBold", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(204)));
             this->Tmin->Location = System::Drawing::Point(37, 416);
@@ -689,6 +673,8 @@ namespace calculatorv1 {
             // 
             // Tmax
             // 
+            this->Tmax->BackColor = System::Drawing::SystemColors::Window;
+            this->Tmax->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
             this->Tmax->Font = (gcnew System::Drawing::Font(L"Montserrat SemiBold", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(204)));
             this->Tmax->Location = System::Drawing::Point(37, 67);
@@ -699,31 +685,34 @@ namespace calculatorv1 {
             // 
             // textBox_debug
             // 
-            this->textBox_debug->BackColor = System::Drawing::SystemColors::Window;
-            this->textBox_debug->Location = System::Drawing::Point(12, 406);
+            this->textBox_debug->BackColor = System::Drawing::Color::AliceBlue;
+            this->textBox_debug->BorderStyle = System::Windows::Forms::BorderStyle::None;
+            this->textBox_debug->Location = System::Drawing::Point(12, 401);
             this->textBox_debug->Multiline = true;
             this->textBox_debug->Name = L"textBox_debug";
             this->textBox_debug->ReadOnly = true;
             this->textBox_debug->ScrollBars = System::Windows::Forms::ScrollBars::Vertical;
-            this->textBox_debug->Size = System::Drawing::Size(312, 323);
+            this->textBox_debug->Size = System::Drawing::Size(312, 325);
             this->textBox_debug->TabIndex = 13;
+            this->textBox_debug->UseWaitCursor = true;
             this->textBox_debug->WordWrap = false;
             // 
             // MyForm
             // 
             this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
             this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
+            this->BackColor = System::Drawing::Color::AliceBlue;
             this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
             this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
-            this->ClientSize = System::Drawing::Size(1402, 805);
+            this->ClientSize = System::Drawing::Size(1402, 823);
             this->Controls->Add(this->textBox_debug);
             this->Controls->Add(this->groupBox5);
             this->Controls->Add(this->button2);
+            this->Controls->Add(this->groupBox1);
             this->Controls->Add(this->button1);
             this->Controls->Add(this->groupBox2);
             this->Controls->Add(this->label_result);
             this->Controls->Add(this->button_raschet);
-            this->Controls->Add(this->groupBox1);
             this->Controls->Add(this->label2);
             this->Controls->Add(this->groupLeftgu);
             this->Controls->Add(this->groupBox3);
@@ -732,7 +721,7 @@ namespace calculatorv1 {
             this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
             this->Name = L"MyForm";
             this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
-            this->Text = L"Модель теплопроводности композитного стержня";
+            this->Text = L"Thermix";
             this->Load += gcnew System::EventHandler(this, &MyForm::MyForm_Load);
             this->groupLeftgu->ResumeLayout(false);
             this->groupLeftgu->PerformLayout();
@@ -751,207 +740,335 @@ namespace calculatorv1 {
 
         }
 #pragma endregion
+private:
+    bool isCalculating = false;
+    bool hasCalculationResult = false;
 
-    private:
-        bool isCalculating = false;
-        bool hasCalculationResult = false;
-        void DebugLog(String^ text) {
-            textBox_debug->AppendText(text + Environment::NewLine);
-        }
-        void ClearDebug() {
-            textBox_debug->Clear();
-        }
-        void InitializeData()
+    void DebugLog(String^ text)
+    {
+        textBox_debug->AppendText(text + Environment::NewLine);
+    }
+
+    void ClearDebug()
+    {
+        textBox_debug->Clear();
+    }
+
+    System::Drawing::Drawing2D::GraphicsPath^ RoundedRect(System::Drawing::Rectangle rect, int radius)
+    {
+        System::Drawing::Drawing2D::GraphicsPath^ path =
+            gcnew System::Drawing::Drawing2D::GraphicsPath();
+
+        int d = radius * 2;
+        rect.Width -= 1;
+        rect.Height -= 1;
+
+        path->AddArc(rect.X, rect.Y, d, d, 180, 90);
+        path->AddArc(rect.Right - d, rect.Y, d, d, 270, 90);
+        path->AddArc(rect.Right - d, rect.Bottom - d, d, d, 0, 90);
+        path->AddArc(rect.X, rect.Bottom - d, d, d, 90, 90);
+        path->CloseFigure();
+
+        return path;
+    }
+
+    void RoundControl(System::Windows::Forms::Control^ control, int radius)
+    {
+        if (control == nullptr)
+            return;
+
+        System::Drawing::Rectangle rect =
+            System::Drawing::Rectangle(0, 0, control->Width, control->Height);
+
+        control->Region = gcnew System::Drawing::Region(RoundedRect(rect, radius));
+    }
+
+    void RoundedControl_Resize(System::Object^ sender, System::EventArgs^ e)
+    {
+        System::Windows::Forms::Control^ control =
+            safe_cast<System::Windows::Forms::Control^>(sender);
+
+        RoundControl(control, 12);
+    }
+
+    void StyleButton(Button^ btn, Color backColor, Color textColor)
+    {
+        btn->FlatStyle = FlatStyle::Flat;
+        btn->FlatAppearance->BorderSize = 0;
+        btn->BackColor = backColor;
+        btn->ForeColor = textColor;
+        btn->Cursor = Cursors::Hand;
+        btn->UseVisualStyleBackColor = false;
+        RoundControl(btn, 6);
+    }
+
+    void StyleTextBox(System::Windows::Forms::TextBox^ tb)
+    {
+        if (tb == nullptr)
+            return;
+
+        tb->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
+        tb->BackColor = System::Drawing::Color::FromArgb(248, 250, 254);
+        tb->ForeColor = System::Drawing::Color::FromArgb(30, 30, 30);
+    }
+
+    void InitializeData()
+    {
+        materialBoxes = gcnew List<GroupBox^>();
+        contactAlphaBoxes = gcnew List<TextBox^>();
+
+        yavn_chb->Checked = true;
+        neyavn_chb->Checked = false;
+        kn_chb->Checked = false;
+
+        comboLeftTypegu->SelectedIndex = 2;
+        comboRightTypegu->SelectedIndex = 2;
+        comboLeftTypegu->DropDownStyle = ComboBoxStyle::DropDownList;
+        comboRightTypegu->DropDownStyle = ComboBoxStyle::DropDownList;
+
+        comboLeftTypegu->FlatStyle = FlatStyle::Flat;
+        comboRightTypegu->FlatStyle = FlatStyle::Flat;
+
+        comboLeftTypegu->BackColor = Color::FromArgb(245, 247, 252);
+        comboRightTypegu->BackColor = Color::FromArgb(245, 247, 252);
+
+        comboLeftTypegu->Font = comboRightTypegu->Font;
+
+        InitializeDynamicMaterialsUI();
+        btnAddMaterialDynamic->Font = button_ochistka->Font;
+        btnDeleteMaterialDynamic->Font = button_ochistka->Font;
+
+        StyleButton(btnAddMaterialDynamic, Color::AliceBlue, Color::Blue);
+        StyleButton(btnDeleteMaterialDynamic, Color::AliceBlue, Color::Blue);
+        StyleButton(button_ochistka, Color::AliceBlue, Color::Blue);
+        StyleButton(button_raschet, System::Drawing::Color::Blue, System::Drawing::Color::White);
+        Xmin->KeyDown += gcnew KeyEventHandler(this, &MyForm::textBox_scale_KeyDown);
+        Xmax->KeyDown += gcnew KeyEventHandler(this, &MyForm::textBox_scale_KeyDown);
+        Tmin->KeyDown += gcnew KeyEventHandler(this, &MyForm::textBox_scale_KeyDown);
+        Tmax->KeyDown += gcnew KeyEventHandler(this, &MyForm::textBox_scale_KeyDown);
+
+        solution = nullptr;
+        explicitSolution = nullptr;
+        implicitSolution = nullptr;
+        cnSolution = nullptr;
+
+        textBox6->Text = "20";
+        textBox8->Text = "660";
+        textBoxtau->Text = "0";
+    }
+
+    GroupBox^ CreateMaterialBox(int number)
+    {
+        GroupBox^ gb = gcnew GroupBox();
+        gb->Text = "Материал " + number.ToString();
+        gb->Width = 225;
+        gb->Height = 225;
+        gb->Margin = System::Windows::Forms::Padding(0, 0, 0, 6);
+        gb->Font = gcnew System::Drawing::Font(
+            L"Montserrat SemiBold",
+            9,
+            System::Drawing::FontStyle::Bold
+        );
+
+        ComboBox^ cb = gcnew ComboBox();
+        cb->Name = "comboMaterial";
+        cb->Location = System::Drawing::Point(8, 25);
+        cb->Size = System::Drawing::Size(195, 24);
+        cb->DropDownStyle = ComboBoxStyle::DropDownList;
+        cb->Items->Add(L"Сталь");
+        cb->Items->Add(L"Кирпич");
+        cb->SelectedIndex = (number == 1 ? 0 : 1);
+
+        gb->Controls->Add(cb);
+
+        array<String^>^ labels = gcnew array<String^>
         {
-            materialBoxes = gcnew List<GroupBox^>();
+            L"Lambda тепл-ть",
+                L"ro - Плотность",
+                L"C - Теплоемкость",
+                L"L - длина стержня",
+                L"N - узлы"
+        };
 
-            yavn_chb->Checked = true;
-            neyavn_chb->Checked = false;
-            kn_chb->Checked = false;
-
-            comboLeftTypegu->SelectedIndex = 2;
-            comboRightTypegu->SelectedIndex = 2;
-
-            InitializeDynamicMaterialsUI();
-
-            Xmin->KeyDown += gcnew KeyEventHandler(this, &MyForm::textBox_scale_KeyDown);
-            Xmax->KeyDown += gcnew KeyEventHandler(this, &MyForm::textBox_scale_KeyDown);
-            Tmin->KeyDown += gcnew KeyEventHandler(this, &MyForm::textBox_scale_KeyDown);
-            Tmax->KeyDown += gcnew KeyEventHandler(this, &MyForm::textBox_scale_KeyDown);
-
-            solution = nullptr;
-            explicitSolution = nullptr;
-            implicitSolution = nullptr;
-            cnSolution = nullptr;
-
-            textBoxtau->Text = "0";
-            textBox6->Text = "20";   
-            textBox8->Text = "660";  
-            textBoxtau->Text = "0";  
-        }
-
-        GroupBox^ CreateMaterialBox(int number)
+        array<String^>^ names = gcnew array<String^>
         {
-            GroupBox^ gb = gcnew GroupBox();
-            gb->Text = "Материал " + number.ToString();
-            gb->Width = 225;
-            gb->Height = 225;
-            gb->Margin = System::Windows::Forms::Padding(0, 0, 0, 6);
-            gb->Font = gcnew System::Drawing::Font(
-                L"Montserrat SemiBold",
-                9,
-                System::Drawing::FontStyle::Bold
-            );
+            L"txtLambda",
+                L"txtRo",
+                L"txtC",
+                L"txtL",
+                L"txtN"
+        };
 
-            ComboBox^ cb = gcnew ComboBox();
-            cb->Name = "comboMaterial";
-            cb->Location = Point(8, 25);
-            cb->Size = Drawing::Size(195, 24);
-            cb->DropDownStyle = ComboBoxStyle::DropDownList;
-            cb->Items->Add(L"Сталь");
-            cb->Items->Add(L"Кирпич");
-            cb->SelectedIndex = (number == 1 ? 0 : 1);
-
-            gb->Controls->Add(cb);
-
-            array<String^>^ labels = gcnew array<String^>
-            {
-                L"Lambda тепл-ть",
-                    L"ro - Плотность",
-                    L"C - Теплоемкость",
-                    L"L - длина стержня",
-                    L"N - узлы"
-            };
-
-            array<String^>^ names = gcnew array<String^>
-            {
-                L"txtLambda",
-                    L"txtRo",
-                    L"txtC",
-                    L"txtL",
-                    L"txtN"
-            };
-
-            for (int i = 0; i < labels->Length; i++)
-            {
-                Label^ lbl = gcnew Label();
-                lbl->Text = labels[i];
-                lbl->Location = Point(8, 63 + i * 28);
-                lbl->Size = Drawing::Size(115, 22);
-
-                TextBox^ tb = gcnew TextBox();
-                tb->Name = names[i];
-                tb->Location = Point(125, 60 + i * 28);
-                tb->Size = Drawing::Size(75, 22);
-                tb->Font = gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7.8F);
-
-                gb->Controls->Add(lbl);
-                gb->Controls->Add(tb);
-            }
-
-            cb->SelectedIndexChanged += gcnew EventHandler(this, &MyForm::DynamicMaterialChanged);
-
-            FillMaterialBox(gb);
-
-            return gb;
-        }
-
-        void FillMaterialBox(GroupBox^ gb)
+        for (int i = 0; i < labels->Length; i++)
         {
-            ComboBox^ cb = safe_cast<ComboBox^>(gb->Controls["comboMaterial"]);
+            Label^ lbl = gcnew Label();
+            lbl->Text = labels[i];
+            lbl->Location = System::Drawing::Point(8, 63 + i * 28);
+            lbl->Size = System::Drawing::Size(115, 22);
 
-            TextBox^ txtLambda = safe_cast<TextBox^>(gb->Controls["txtLambda"]);
-            TextBox^ txtRo = safe_cast<TextBox^>(gb->Controls["txtRo"]);
-            TextBox^ txtC = safe_cast<TextBox^>(gb->Controls["txtC"]);
-            TextBox^ txtL = safe_cast<TextBox^>(gb->Controls["txtL"]);
-            TextBox^ txtN = safe_cast<TextBox^>(gb->Controls["txtN"]);
+            TextBox^ tb = gcnew TextBox();
+            tb->Name = names[i];
+            tb->Location = System::Drawing::Point(125, 60 + i * 28);
+            tb->Size = System::Drawing::Size(75, 22);
+            tb->Font = gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7.8F);
 
-            if (cb->Text == L"Сталь")
-            {
-                txtLambda->Text = "33";
-                txtRo->Text = "7710";
-                txtC->Text = "496";
-                txtL->Text = "1";
-                txtN->Text = "512";
-            }
-            else if (cb->Text == L"Кирпич")
-            {
-                txtLambda->Text = "0,5";
-                txtRo->Text = "2000";
-                txtC->Text = "850";
-                txtL->Text = "0,24";
-                txtN->Text = "511";
-            }
+            gb->Controls->Add(lbl);
+            gb->Controls->Add(tb);
         }
 
-        void DynamicMaterialChanged(Object^ sender, EventArgs^ e)
+        cb->SelectedIndexChanged += gcnew EventHandler(this, &MyForm::DynamicMaterialChanged);
+        cb->FlatStyle = FlatStyle::Flat;
+        cb->BackColor = Color::FromArgb(245, 247, 252);
+        FillMaterialBox(gb);
+
+        return gb;
+    }
+
+    GroupBox^ CreateContactAlphaBox(int number)
+    {
+        GroupBox^ gb = gcnew GroupBox();
+        gb->Text = "Контакт " + number.ToString();
+        gb->Width = 225;
+        gb->Height = 80;
+        gb->Margin = System::Windows::Forms::Padding(0, 0, 0, 6);
+        gb->Font = button_ochistka->Font;
+        gb->BackColor = Color::AliceBlue;
+
+        Label^ lbl = gcnew Label();
+        lbl->Text = L"Коэф. теплообмена";
+        lbl->Location = Point(8, 32);
+        lbl->Size = Drawing::Size(130, 22);
+
+        TextBox^ tb = gcnew TextBox();
+        tb->Name = "txtContactAlpha";
+        tb->Location = Point(140, 30);
+        tb->Size = Drawing::Size(70, 22);
+        tb->Text = "";
+
+        gb->Controls->Add(lbl);
+        gb->Controls->Add(tb);
+
+        contactAlphaBoxes->Add(tb);
+
+        return gb;
+    }
+
+    void FillMaterialBox(GroupBox^ gb)
+    {
+        ComboBox^ cb = safe_cast<ComboBox^>(gb->Controls["comboMaterial"]);
+
+        TextBox^ txtLambda = safe_cast<TextBox^>(gb->Controls["txtLambda"]);
+        TextBox^ txtRo = safe_cast<TextBox^>(gb->Controls["txtRo"]);
+        TextBox^ txtC = safe_cast<TextBox^>(gb->Controls["txtC"]);
+        TextBox^ txtL = safe_cast<TextBox^>(gb->Controls["txtL"]);
+        TextBox^ txtN = safe_cast<TextBox^>(gb->Controls["txtN"]);
+
+        if (cb->Text == L"Сталь")
         {
-            ComboBox^ cb = safe_cast<ComboBox^>(sender);
-            GroupBox^ gb = safe_cast<GroupBox^>(cb->Parent);
-
-            FillMaterialBox(gb);
+            txtLambda->Text = "33";
+            txtRo->Text = "7710";
+            txtC->Text = "496";
+            txtL->Text = "1";
+            txtN->Text = "512";
         }
-
-        void InitializeDynamicMaterialsUI()
+        else if (cb->Text == L"Кирпич")
         {
-            flowMaterials->Controls->Clear();
-            materialBoxes->Clear();
-
-            materialButtonsPanel = gcnew Panel();
-            materialButtonsPanel->Width = 225;
-            materialButtonsPanel->Height = 42;
-            materialButtonsPanel->Margin = System::Windows::Forms::Padding(0, 0, 0, 0);
-
-            btnAddMaterialDynamic = gcnew Button();
-            btnAddMaterialDynamic->Text = L"Добавить";
-            btnAddMaterialDynamic->Location = Point(8, 6);
-            btnAddMaterialDynamic->Size = Drawing::Size(95, 28);
-            btnAddMaterialDynamic->Click += gcnew EventHandler(this, &MyForm::AddMaterialDynamic_Click);
-
-            btnDeleteMaterialDynamic = gcnew Button();
-            btnDeleteMaterialDynamic->Text = L"Удалить";
-            btnDeleteMaterialDynamic->Location = Point(128, 6);
-            btnDeleteMaterialDynamic->Size = Drawing::Size(95, 28);
-            btnDeleteMaterialDynamic->Click += gcnew EventHandler(this, &MyForm::DeleteMaterialDynamic_Click);
-
-            materialButtonsPanel->Controls->Add(btnAddMaterialDynamic);
-            materialButtonsPanel->Controls->Add(btnDeleteMaterialDynamic);
-
-            GroupBox^ firstMaterial = CreateMaterialBox(1);
-            materialBoxes->Add(firstMaterial);
-
-            flowMaterials->Controls->Add(firstMaterial);
-            flowMaterials->Controls->Add(materialButtonsPanel);
-
-            btnDeleteMaterialDynamic->Visible = false;
+            txtLambda->Text = "0,5";
+            txtRo->Text = "2000";
+            txtC->Text = "850";
+            txtL->Text = "0,24";
+            txtN->Text = "511";
         }
+    }
 
-        void AddMaterialDynamic_Click(Object^ sender, EventArgs^ e)
+    void DynamicMaterialChanged(Object^ sender, EventArgs^ e)
+    {
+        ComboBox^ cb = safe_cast<ComboBox^>(sender);
+        GroupBox^ gb = safe_cast<GroupBox^>(cb->Parent);
+
+        FillMaterialBox(gb);
+    }
+
+    void InitializeDynamicMaterialsUI()
+    {
+        flowMaterials->Controls->Clear();
+        materialBoxes->Clear();
+        contactAlphaBoxes->Clear();
+
+        materialButtonsPanel = gcnew Panel();
+        materialButtonsPanel->Width = 225;
+        materialButtonsPanel->Height = 42;
+        materialButtonsPanel->Margin = System::Windows::Forms::Padding(0, 0, 0, 0);
+
+        btnAddMaterialDynamic = gcnew Button();
+        btnAddMaterialDynamic->Text = L"Добавить";
+        btnAddMaterialDynamic->Location = Point(8, 6);
+        btnAddMaterialDynamic->Size = Drawing::Size(95, 28);
+        btnAddMaterialDynamic->Font = button_ochistka->Font;
+        btnAddMaterialDynamic->Click += gcnew EventHandler(this, &MyForm::AddMaterialDynamic_Click);
+
+        btnDeleteMaterialDynamic = gcnew Button();
+        btnDeleteMaterialDynamic->Text = L"Удалить";
+        btnDeleteMaterialDynamic->Location = Point(128, 6);
+        btnDeleteMaterialDynamic->Size = Drawing::Size(95, 28);
+        btnDeleteMaterialDynamic->Font = button_ochistka->Font;
+        btnDeleteMaterialDynamic->Click += gcnew EventHandler(this, &MyForm::DeleteMaterialDynamic_Click);
+
+        materialButtonsPanel->Controls->Add(btnAddMaterialDynamic);
+        materialButtonsPanel->Controls->Add(btnDeleteMaterialDynamic);
+
+        GroupBox^ firstMaterial = CreateMaterialBox(1);
+        materialBoxes->Add(firstMaterial);
+
+        flowMaterials->Controls->Add(firstMaterial);
+        flowMaterials->Controls->Add(materialButtonsPanel);
+
+        btnDeleteMaterialDynamic->Visible = false;
+
+        StyleButton(btnAddMaterialDynamic, Color::AliceBlue, Color::Blue);
+        StyleButton(btnDeleteMaterialDynamic, Color::AliceBlue, Color::Blue);
+    }
+
+    void AddMaterialDynamic_Click(Object^ sender, EventArgs^ e)
+    {
+        flowMaterials->Controls->Remove(materialButtonsPanel);
+
+        GroupBox^ contactBox = CreateContactAlphaBox(materialBoxes->Count);
+        flowMaterials->Controls->Add(contactBox);
+
+        GroupBox^ newMaterial = CreateMaterialBox(materialBoxes->Count + 1);
+        materialBoxes->Add(newMaterial);
+
+        flowMaterials->Controls->Add(newMaterial);
+        flowMaterials->Controls->Add(materialButtonsPanel);
+
+        btnDeleteMaterialDynamic->Visible = materialBoxes->Count > 1;
+    }
+
+    void DeleteMaterialDynamic_Click(Object^ sender, EventArgs^ e)
+    {
+        if (materialBoxes->Count <= 1)
+            return;
+
+        flowMaterials->Controls->Remove(materialButtonsPanel);
+
+        Control^ lastMaterial = materialBoxes[materialBoxes->Count - 1];
+        flowMaterials->Controls->Remove(lastMaterial);
+        materialBoxes->RemoveAt(materialBoxes->Count - 1);
+
+        if (flowMaterials->Controls->Count > 0)
         {
-            flowMaterials->Controls->Remove(materialButtonsPanel);
-
-            GroupBox^ newMaterial = CreateMaterialBox(materialBoxes->Count + 1);
-            materialBoxes->Add(newMaterial);
-
-            flowMaterials->Controls->Add(newMaterial);
-            flowMaterials->Controls->Add(materialButtonsPanel);
-
-            btnDeleteMaterialDynamic->Visible = materialBoxes->Count > 1;
+            Control^ lastContact = flowMaterials->Controls[flowMaterials->Controls->Count - 1];
+            flowMaterials->Controls->Remove(lastContact);
         }
 
-        void DeleteMaterialDynamic_Click(Object^ sender, EventArgs^ e)
-        {
-            if (materialBoxes->Count <= 1)
-                return;
+        if (contactAlphaBoxes->Count > 0)
+            contactAlphaBoxes->RemoveAt(contactAlphaBoxes->Count - 1);
 
-            GroupBox^ lastMaterial = materialBoxes[materialBoxes->Count - 1];
+        flowMaterials->Controls->Add(materialButtonsPanel);
 
-            flowMaterials->Controls->Remove(lastMaterial);
-            materialBoxes->RemoveAt(materialBoxes->Count - 1);
-
-            btnDeleteMaterialDynamic->Visible = materialBoxes->Count > 1;
-        }
-
+        btnDeleteMaterialDynamic->Visible = materialBoxes->Count > 1;
+    }
         List<RodSegment^>^ buildsegments()
         {
             List<RodSegment^>^ segs = gcnew List<RodSegment^>();
@@ -1130,12 +1247,12 @@ namespace calculatorv1 {
             chart->ChartAreas[0]->AxisX->Interval = Double::NaN;
             chart->ChartAreas[0]->AxisY->Interval = Double::NaN;
             chart->ChartAreas[0]->AxisX->LabelStyle->Format = "F2";
-            chart->ChartAreas[0]->AxisY->LabelStyle->Format = "F1";
+            chart->ChartAreas[0]->AxisY->LabelStyle->Format = "F3";
 
             Xmin->Text = xMinVal.ToString("F2");
             Xmax->Text = xMaxVal.ToString("F2");
-            Tmin->Text = yMinVal.ToString("F1");
-            Tmax->Text = yMaxVal.ToString("F1");
+            Tmin->Text = yMinVal.ToString("F3");
+            Tmax->Text = yMaxVal.ToString("F3");
         }
 
         void ApplyScale()
@@ -1506,7 +1623,12 @@ private: System::Void button_raschet_Click(System::Object^ sender, System::Event
     }
 }
 
-private: System::Void MyForm_Load(System::Object^ sender, System::EventArgs^ e){}
+private: System::Void MyForm_Load(System::Object^ sender, System::EventArgs^ e){
+    StyleButton(button_raschet, Color::FromArgb(32, 60, 255), Color::White);
+    StyleButton(button_ochistka, Color::FromArgb(245, 247, 252), Color::FromArgb(40, 40, 40));
+    StyleButton(btnAddMaterialDynamic, Color::FromArgb(245, 247, 252), Color::FromArgb(40, 40, 40));
+    StyleButton(btnDeleteMaterialDynamic, Color::FromArgb(245, 247, 252), Color::FromArgb(40, 40, 40));
+}
 
 private: System::Void comboLeftTypegu_SelectedIndexChanged(System::Object^ sender, System::EventArgs^ e)
 {
@@ -1705,6 +1827,8 @@ private: System::Void button_ochistka_Click(System::Object^ sender, System::Even
 private: System::Void labeltau_Click(System::Object^ sender, System::EventArgs^ e) {
 }
 private: System::Void textBoxtau_TextChanged(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void groupLeftgu_Enter(System::Object^ sender, System::EventArgs^ e) {
 }
 };
        }
